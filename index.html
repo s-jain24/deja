@@ -1,0 +1,1939 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Déjà — New inspiration. Already yours.</title>
+<meta name="description" content="Upload the outfits you own, add an inspiration, and Deja finds that look in your own wardrobe.">
+<meta name="theme-color" content="#FFFFFF">
+<meta property="og:title" content="Déjà"><meta property="og:description" content="New inspiration. Already yours.">
+<meta property="og:image" content="/icon-512.png">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preload" href="/fonts/dm-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/playfair-display-latin-400-italic.woff2" as="font" type="font/woff2" crossorigin>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}</style>
+
+<style>
+@font-face{font-family:"DM Sans";font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/dm-sans-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"DM Sans";font-style:normal;font-weight:500;font-display:swap;src:url(/fonts/dm-sans-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"DM Sans";font-style:normal;font-weight:600;font-display:swap;src:url(/fonts/dm-sans-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"Playfair Display";font-style:italic;font-weight:400;font-display:swap;src:url(/fonts/playfair-display-latin-400-italic.woff2) format("woff2")}
+@font-face{font-family:"Playfair Display";font-style:italic;font-weight:500;font-display:swap;src:url(/fonts/playfair-display-latin-500-italic.woff2) format("woff2")}
+
+/* ---------- Tokens (from the Déjà Figma frames) ---------- */
+:root{
+  color-scheme: light;
+  --ink:#171618;          /* pill buttons, check, wordmark */
+  --text:#1E1D20;
+  --muted:#6B6670;
+  --faint:#9A95A0;
+  --track:#ECEAEE;        /* progress track, dividers */
+  --card:#FFFFFF;
+  --ground:#FFFFFF;
+  --tint:#F7F4F7;         /* quiet fills */
+  --rose:#D8649A;         /* glow core */
+  --blush:#EFA6C8;
+  --lilac:#B6A3DD;
+  --crimson:#B01A45;      /* from frame 1 splash, used for "saved" only */
+  --ok:#2E6F4F;
+  --warn:#9A5A14;
+  --danger:#A8261F;
+  --serif:"Playfair Display", "Didot", "Bodoni 72", Georgia, serif;
+  --sans:"DM Sans", "Helvetica Neue", Helvetica, system-ui, sans-serif;
+  --r-card:14px;
+  --r-tile:12px;
+  --pill:999px;
+  --pad:24px;
+  --shadow-card:0 1px 2px rgba(40,20,45,.06), 0 8px 24px rgba(60,25,60,.08);
+  --col:460px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--ground);color:var(--text);font:400 15px/1.5 var(--sans);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+img{max-width:100%;display:block}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:6px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+em.s, .serif{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.005em}
+
+/* ---------- App column ---------- */
+.app{max-width:var(--col);margin:0 auto;min-height:100%;position:relative;background:var(--ground);isolation:isolate}
+@media (min-width:640px){
+  body{background:#F3EFF3}
+  .app{box-shadow:0 0 0 1px rgba(30,10,30,.05),0 30px 80px rgba(60,20,60,.10)}
+}
+.screen{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;position:relative;padding:0 var(--pad);padding-block:max(20px, env(safe-area-inset-top,0px)) 32px}
+.screen.has-nav{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+
+/* ---------- The Déjà glow (soft blurred mesh from the frames) ---------- */
+.glow{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.glow::before,.glow::after{content:"";position:absolute;border-radius:50%;filter:blur(38px)}
+.glow::before{width:95%;height:34%;left:22%;top:var(--gy,56%);background:radial-gradient(closest-side,rgba(216,100,154,.62),rgba(232,150,190,.35) 55%,rgba(255,255,255,0));}
+.glow::after{width:70%;height:30%;left:-22%;top:calc(var(--gy,56%) - 4%);background:radial-gradient(closest-side,rgba(170,148,220,.55),rgba(190,175,230,.25) 60%,rgba(255,255,255,0));}
+.glow.low{--gy:62%}
+.glow.hero{--gy:50%}.glow.hero::before{height:40%}
+.glow.mid{--gy:40%}
+.glow.top{--gy:-8%}
+.glow.soft::before{opacity:.55}.glow.soft::after{opacity:.5}
+@media (prefers-reduced-motion:no-preference){
+  .glow.breathe::before{animation:drift 7s ease-in-out infinite alternate}
+  .glow.breathe::after{animation:drift2 8s ease-in-out infinite alternate}
+}
+@keyframes drift{to{transform:translate(-14%,6%) scale(1.12)}}
+@keyframes drift2{to{transform:translate(22%,-8%) scale(1.15)}}
+
+/* ---------- Type ---------- */
+.wordmark{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--ink);letter-spacing:-.01em;line-height:1}
+.h-display{font-size:22px;line-height:1.36;font-weight:400;text-align:center;text-wrap:balance;margin:0}
+.h-display em.s{font-size:1.08em}
+.h-page{font-size:26px;line-height:1.2;font-weight:400;margin:0;text-wrap:balance}
+.h-page em.s{font-size:1.12em}
+.lede{color:var(--muted);font-size:15px;margin:0}
+.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.small{font-size:13px;color:var(--muted)}
+
+/* ---------- Buttons ---------- */
+.btn{appearance:none;border:0;border-radius:var(--pill);min-height:52px;padding:0 24px;display:inline-flex;align-items:center;justify-content:center;gap:10px;font-size:16px;font-weight:500;letter-spacing:.005em;transition:transform .15s ease, background .15s ease, opacity .15s}
+.btn:active{transform:scale(.985)}
+.btn-primary{background:var(--ink);color:#fff;width:100%}
+.btn-primary:hover{background:#000}
+.btn-primary[disabled]{opacity:.35;cursor:not-allowed;transform:none}
+.btn-light{background:#fff;color:var(--ink);box-shadow:inset 0 0 0 1px rgba(23,22,24,.14)}
+.btn-light:hover{box-shadow:inset 0 0 0 1px rgba(23,22,24,.4)}
+.btn-sm{min-height:40px;font-size:14px;padding:0 16px}
+.link{appearance:none;background:none;border:0;padding:10px 8px;min-height:44px;font-size:14px;color:var(--text);text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(30,29,32,.3)}
+.link:hover{text-decoration-color:currentColor}
+.link.quiet{text-decoration:none;color:var(--muted)}
+.icon-btn{appearance:none;border:0;background:transparent;width:44px;height:44px;border-radius:50%;display:inline-grid;place-items:center;color:var(--ink)}
+.icon-btn:hover{background:rgba(23,22,24,.06)}
+.icon-btn svg,.btn svg{width:22px;height:22px}
+.cta-stack{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
+.onb .cta-stack .btn-primary,.onb > .btn-primary{max-width:310px;align-self:center}
+
+/* ---------- Progress (frame 3–5 top bar) ---------- */
+.progress{height:3px;border-radius:3px;background:var(--track);margin:14px 24px 0;position:relative;overflow:hidden}
+.progress i{position:absolute;inset:0 auto 0 0;background:var(--ink);border-radius:3px;transition:width .5s ease}
+
+/* ---------- Top bar in app ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px;margin-bottom:8px}
+.topbar .wordmark{font-size:28px}
+.topbar .left{display:flex;align-items:center;gap:2px;margin-left:-10px}
+.space-chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;letter-spacing:.02em;padding:6px 10px 6px 8px;border-radius:var(--pill);background:#fff;box-shadow:inset 0 0 0 1px rgba(23,22,24,.12);color:var(--ink)}
+.space-chip .dot{width:7px;height:7px;border-radius:50%;background:var(--rose)}
+
+/* ---------- Photo card (collage + tiles) ---------- */
+.photo{position:relative;border-radius:var(--r-tile);overflow:hidden;background:var(--tint);aspect-ratio:3/4;max-width:100%}
+.photo img{width:100%;height:100%;object-fit:cover}
+.polaroid{background:#fff;border-radius:10px;padding:6px;box-shadow:var(--shadow-card)}
+.polaroid .photo{border-radius:6px}
+
+/* ---------- Welcome collage ---------- */
+.collage{position:relative;height:170px;overflow:hidden;margin:28px calc(var(--pad) * -1) 0;display:flex;justify-content:center;align-items:center}
+.collage .polaroid{position:absolute;width:96px}
+.collage .polaroid:nth-child(1){transform:translateX(-196px) rotate(-8deg) scale(.92)}
+.collage .polaroid:nth-child(2){transform:translateX(-100px) rotate(-4deg)}
+.collage .polaroid:nth-child(3){transform:translateY(-6px) scale(1.04);z-index:2}
+.collage .polaroid:nth-child(4){transform:translateX(104px) rotate(5deg)}
+.collage .polaroid:nth-child(5){transform:translateX(200px) rotate(9deg) scale(.92)}
+@media (prefers-reduced-motion:no-preference){
+  .collage .polaroid{animation:rise .7s cubic-bezier(.2,.8,.2,1) both}
+  .collage .polaroid:nth-child(2){animation-delay:.06s}.collage .polaroid:nth-child(3){animation-delay:.12s}
+  .collage .polaroid:nth-child(4){animation-delay:.18s}.collage .polaroid:nth-child(5){animation-delay:.24s}
+}
+@keyframes rise{from{opacity:0;translate:0 18px}to{opacity:1;translate:0 0}}
+
+.how{list-style:none;padding:0;margin:22px auto 0;display:grid;gap:10px;max-width:300px}
+.how li{display:grid;grid-template-columns:22px 1fr;gap:10px;font-size:14px;color:var(--text);line-height:1.4}
+.how b{font-family:var(--serif);font-style:italic;font-weight:400;font-size:17px;line-height:1.1;color:var(--ink);text-align:center}
+
+/* ---------- Onboarding upload target ---------- */
+.drop{appearance:none;border:0;background:transparent;width:100%;flex:1;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border-radius:24px;color:var(--ink)}
+.drop svg{width:46px;height:46px}
+.drop.over{background:rgba(255,255,255,.55);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.drop .small{max-width:240px;text-align:center}
+
+/* ---------- Review grid (frame 4) ---------- */
+.review-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px}
+.tile{position:relative}
+.tile .photo{border-radius:10px;box-shadow:0 1px 0 rgba(0,0,0,.02)}
+.tile .state{position:absolute;inset:0;display:grid;place-items:center;border-radius:10px;background:rgba(255,255,255,.72);backdrop-filter:blur(2px);text-align:center;padding:8px;font-size:12px;color:var(--text)}
+.tile .state.err{background:rgba(255,246,246,.9);color:var(--danger)}
+.tile .x{position:absolute;top:-8px;right:-8px;width:28px;height:28px;border-radius:50%;border:0;background:var(--ink);color:#fff;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.tile .x svg{width:14px;height:14px}
+.tile .x::after{content:"";position:absolute;inset:-8px}
+.add-tile{appearance:none;border:0;background:transparent;aspect-ratio:3/4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--ink);font-size:12px;border-radius:10px}
+.add-tile svg{width:30px;height:30px}
+.add-tile:hover{background:rgba(255,255,255,.5)}
+.spinner{width:22px;height:22px;border-radius:50%;border:2px solid rgba(23,22,24,.15);border-top-color:var(--ink);animation:spin .8s linear infinite;margin:0 auto 6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- Done (frame 5) ---------- */
+.done{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px;cursor:pointer}
+.done svg{width:40px;height:40px;margin-bottom:10px}
+.done .l1{font-size:22px}
+.done .l2{font-size:52px;line-height:.9;margin-top:2px}
+@media (prefers-reduced-motion:no-preference){
+  .done svg path{stroke-dasharray:40;stroke-dashoffset:40;animation:draw .6s .15s ease forwards}
+}
+@keyframes draw{to{stroke-dashoffset:0}}
+
+/* ---------- Banners / notices ---------- */
+.notice{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.78);border-radius:14px;padding:12px 14px;font-size:13.5px;line-height:1.45;box-shadow:inset 0 0 0 1px rgba(23,22,24,.08)}
+.notice svg{width:18px;height:18px;flex:0 0 18px;margin-top:1px}
+.notice.warn{background:#FFF8EE;box-shadow:inset 0 0 0 1px rgba(154,90,20,.18)}
+.notice.warn svg{color:var(--warn)}
+.notice .actions{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.notice .link{padding:4px 0;min-height:32px;margin-right:12px}
+
+/* ---------- Wardrobe ---------- */
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:6px 0 18px}
+.count{font-size:13px;color:var(--muted);white-space:nowrap;padding-bottom:4px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 14px}
+.o-card{appearance:none;border:0;background:transparent;padding:0;text-align:left;display:flex;flex-direction:column;gap:8px;min-width:0}
+.o-card .polaroid{transition:transform .2s ease, box-shadow .2s ease}
+.o-card:hover .polaroid{transform:translateY(-2px);box-shadow:0 2px 4px rgba(40,20,45,.06),0 14px 30px rgba(60,25,60,.12)}
+.o-card:nth-child(4n+1) .polaroid{rotate:-1deg}.o-card:nth-child(4n+2) .polaroid{rotate:1.2deg}
+.o-card:nth-child(4n+3) .polaroid{rotate:.8deg}.o-card:nth-child(4n) .polaroid{rotate:-1.3deg}
+.o-card .name{font-size:14.5px;font-weight:500;line-height:1.25;padding:0 2px;overflow-wrap:anywhere}
+.o-card .meta{display:flex;flex-wrap:wrap;gap:4px;padding:0 2px}
+.badge{position:absolute;left:8px;bottom:8px;font-size:11px;font-weight:600;padding:4px 8px;border-radius:var(--pill);background:rgba(255,255,255,.92);color:var(--text);display:inline-flex;gap:5px;align-items:center}
+.badge .spinner{width:10px;height:10px;border-width:1.5px;margin:0}
+.badge.err{color:var(--danger)}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;line-height:1;padding:6px 9px;border-radius:var(--pill);background:var(--tint);color:var(--text);white-space:nowrap}
+.chip.quiet{background:transparent;box-shadow:inset 0 0 0 1px var(--track);color:var(--muted)}
+
+.dock{position:fixed;left:50%;transform:translateX(-50%);width:min(100%,var(--col));bottom:calc(72px + env(safe-area-inset-bottom,0px));padding:14px var(--pad) 10px;background:linear-gradient(to top,rgba(255,255,255,.96) 55%,rgba(255,255,255,0));z-index:5}
+
+/* ---------- Bottom nav ---------- */
+.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(100%,var(--col));background:rgba(255,255,255,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--track);display:grid;grid-template-columns:repeat(3,1fr);padding:6px 10px calc(8px + env(safe-area-inset-bottom,0px));z-index:6}
+.nav a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;min-height:56px;color:var(--faint);text-decoration:none;font-size:12px;font-weight:500;border-radius:12px}
+.nav a svg{width:23px;height:23px}
+.nav a[aria-current="page"]{color:var(--ink)}
+.nav a[aria-current="page"] span{position:relative}
+.nav a[aria-current="page"] span::after{content:"";position:absolute;left:50%;bottom:-6px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--rose)}
+
+/* ---------- Detail ---------- */
+.back-row{display:flex;align-items:center;justify-content:space-between;min-height:48px;margin:0 -10px 6px}
+.detail-photo{width:100%;max-width:100%;border-radius:18px;overflow:hidden;box-shadow:var(--shadow-card);aspect-ratio:3/4;background:var(--tint)}
+.detail-photo img{width:100%;height:100%;object-fit:cover}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.input{width:100%;min-height:48px;border-radius:12px;border:0;background:var(--tint);padding:0 14px;font-size:16px;box-shadow:inset 0 0 0 1px transparent}
+.input:focus{outline:none;box-shadow:inset 0 0 0 1.5px var(--ink);background:#fff}
+textarea.input{min-height:98px;padding:12px 14px;line-height:1.5;resize:vertical;font-size:16px}
+.name-input{font-size:22px;font-weight:500;background:transparent;padding:0 2px;min-height:44px;border-radius:8px}
+.name-input:hover{background:var(--tint)}
+.tags{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tag{display:inline-flex;align-items:center;gap:2px;font-size:13px;padding:0 4px 0 12px;min-height:34px;border-radius:var(--pill);background:var(--tint)}
+.tag button{appearance:none;border:0;background:transparent;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}
+.tag button:hover{background:rgba(0,0,0,.06);color:var(--ink)}
+.tag button svg{width:12px;height:12px}
+.tag-add{display:flex;gap:8px;width:100%}
+.tag-add .input{min-height:40px;font-size:15px}
+.stack{display:flex;flex-direction:column;gap:18px}
+.row{display:flex;gap:10px;align-items:center}
+.row.wrap{flex-wrap:wrap}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.prose{font-size:15px;line-height:1.55;margin:0;color:var(--text)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px;margin:0}
+.kv dt{color:var(--muted)}.kv dd{margin:0}
+.danger{color:var(--danger)}
+.btn-danger{background:#fff;color:var(--danger);box-shadow:inset 0 0 0 1px rgba(168,38,31,.28);width:100%}
+
+/* ---------- Style me ---------- */
+.insp-drop{appearance:none;border:0;width:100%;aspect-ratio:4/3;max-height:320px;border-radius:22px;background:rgba(255,255,255,.62);box-shadow:inset 0 0 0 1.5px rgba(23,22,24,.14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--ink);padding:18px;text-align:center}
+.insp-drop:hover,.insp-drop.over{box-shadow:inset 0 0 0 1.5px var(--ink);background:rgba(255,255,255,.8)}
+.insp-drop svg{width:40px;height:40px}
+.insp-preview{position:relative;border-radius:22px;overflow:hidden;background:var(--tint);box-shadow:var(--shadow-card);max-height:420px;display:flex;justify-content:center}
+.insp-preview img{max-height:420px;width:auto;max-width:100%;object-fit:contain}
+.insp-preview .ovl{position:absolute;left:10px;right:10px;bottom:10px;display:flex;gap:8px;justify-content:flex-end}
+.pill-float{appearance:none;border:0;min-height:40px;padding:0 14px;border-radius:var(--pill);background:rgba(255,255,255,.94);font-size:13.5px;font-weight:500;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.pill-float svg{width:16px;height:16px}
+.samples{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.sample{appearance:none;border:0;background:transparent;padding:0;text-align:left;display:flex;flex-direction:column;gap:6px;min-width:0}
+.sample .photo{border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.sample[aria-pressed="true"] .photo{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--ink)}
+.sample span{font-size:12.5px;line-height:1.25;color:var(--text)}
+.occasions{display:flex;flex-wrap:wrap;gap:8px}
+.occ{appearance:none;border:0;min-height:40px;padding:0 16px;border-radius:var(--pill);background:#fff;box-shadow:inset 0 0 0 1px rgba(23,22,24,.16);font-size:14px;font-weight:500}
+.occ[aria-pressed="true"]{background:var(--ink);color:#fff;box-shadow:none}
+.section-label{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.live-status{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)}
+.live-status i{width:7px;height:7px;border-radius:50%;background:var(--faint)}
+.live-status.on i{background:#3E9B6A;box-shadow:0 0 0 3px rgba(62,155,106,.18)}
+.live-status.off i{background:#C58B3A}
+.live-status.notes i{background:var(--lilac);box-shadow:0 0 0 3px rgba(182,163,221,.25)}
+.source.notes i{width:6px;height:6px;border-radius:50%;background:var(--lilac)}
+
+/* ---------- Loading ---------- */
+.thinking{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px}
+.thinking .thumb{width:132px;border-radius:14px;overflow:hidden;box-shadow:var(--shadow-card);rotate:-3deg}
+.thinking .l2{font-size:44px;line-height:1}
+.steps{list-style:none;padding:0;margin:6px 0 0;display:grid;gap:6px;font-size:14px;color:var(--muted)}
+.steps li.on{color:var(--ink)}
+.steps li.done{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(0,0,0,.25)}
+
+/* ---------- Matches ---------- */
+.insp-head{display:grid;grid-template-columns:96px 1fr;gap:16px;align-items:center;margin-bottom:6px}
+.insp-head .photo{border-radius:12px;box-shadow:var(--shadow-card);rotate:-2deg}
+.source{display:inline-flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:5px 9px;border-radius:var(--pill);background:#fff;box-shadow:inset 0 0 0 1px rgba(23,22,24,.14)}
+.source.live i{width:6px;height:6px;border-radius:50%;background:#3E9B6A}
+.source.demo i{width:6px;height:6px;border-radius:50%;background:var(--rose)}
+.m-card{background:#fff;border-radius:20px;box-shadow:var(--shadow-card);padding:14px;display:grid;gap:14px}
+.m-top{display:grid;grid-template-columns:120px 1fr;gap:14px;align-items:start}
+.m-top .photo{border-radius:12px}
+.m-title{font-size:18px;font-weight:500;line-height:1.25;margin:2px 0 6px}
+.strength{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:5px 9px;border-radius:var(--pill)}
+.strength.s-strong{background:#F9E3EE;color:#8E1F52}
+.strength.s-good{background:#EFEAF8;color:#4E3C80}
+.strength.s-loose{background:#F2F0EE;color:#5E5A55}
+.m-why{font-size:14px;line-height:1.5;margin:8px 0 0}
+.tip{display:grid;grid-template-columns:auto 1fr;gap:10px;background:var(--tint);border-radius:12px;padding:12px;font-size:14px;line-height:1.45}
+.tip b{font-family:var(--serif);font-style:italic;font-weight:400;font-size:16px}
+.m-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.save-btn[aria-pressed="true"]{background:#FBEAF1;color:var(--crimson);box-shadow:inset 0 0 0 1px rgba(176,26,69,.25)}
+.save-btn[aria-pressed="true"] svg{fill:currentColor}
+.weak{font-size:13.5px;color:var(--muted);line-height:1.5;margin:0}
+
+/* ---------- Saved ---------- */
+.s-list{display:grid;gap:14px}
+.s-item{appearance:none;border:0;background:#fff;border-radius:18px;box-shadow:var(--shadow-card);padding:10px;display:grid;grid-template-columns:86px 1fr;gap:14px;align-items:center;text-align:left;width:100%}
+.s-item .pair{position:relative;height:112px}
+.s-item .pair .a{position:absolute;inset:0 14px 0 0;border-radius:10px;overflow:hidden}
+.s-item .pair .b{position:absolute;right:0;bottom:-2px;width:40px;border-radius:7px;overflow:hidden;box-shadow:0 0 0 2px #fff,0 4px 10px rgba(0,0,0,.15);rotate:6deg}
+.s-item .pair img{width:100%;height:100%;object-fit:cover}
+.s-item .pair .b img{aspect-ratio:3/4}
+.s-item .t{font-size:16px;font-weight:500;line-height:1.25}
+.s-item .d{font-size:13px;color:var(--muted);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ---------- Empty states ---------- */
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:30px 8px}
+.empty .l1{font-size:22px}.empty .l2{font-size:44px;line-height:1}
+.empty p{max-width:290px}
+.ghosts{display:flex;gap:10px;margin-bottom:14px}
+.ghosts span{width:58px;aspect-ratio:3/4;border-radius:10px;background:#fff;box-shadow:var(--shadow-card)}
+.ghosts span:nth-child(1){rotate:-7deg}.ghosts span:nth-child(3){rotate:7deg}
+.ghosts span:nth-child(2){translate:0 -6px;background:linear-gradient(#fff,#fff) padding-box, conic-gradient(from 0deg,#f4d2e3,#e3dbf3,#f4d2e3) border-box;border:6px solid transparent}
+
+/* ---------- Dialog + toast ---------- */
+dialog{border:0;border-radius:22px;padding:22px;width:min(92vw,380px);box-shadow:0 30px 80px rgba(20,0,20,.3);color:var(--text)}
+dialog::backdrop{background:rgba(24,12,24,.35);backdrop-filter:blur(2px)}
+dialog h2{font-size:20px;font-weight:500;margin:0 0 8px}
+dialog p{margin:0 0 18px;color:var(--muted);font-size:14.5px}
+.toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translate(-50%,-16px);box-shadow:0 10px 30px rgba(0,0,0,.18);background:var(--ink);color:#fff;padding:12px 18px;border-radius:var(--pill);font-size:14px;opacity:0;pointer-events:none;transition:.25s ease;z-index:50;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+
+@media (max-width:360px){
+  :root{--pad:18px}
+  .m-top{grid-template-columns:100px 1fr}
+  .collage .polaroid{width:84px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="app" class="app"><section class="screen" style="justify-content:center;align-items:center"><span class="wordmark" style="font-size:56px">Déjà</span></section></div>
+<input type="file" id="file-multi" accept="image/jpeg,image/png,image/webp,image/gif,.heic,.heif" multiple hidden>
+<input type="file" id="file-one" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<dialog id="dlg" aria-label="Confirm"></dialog>
+<noscript><p style="padding:24px">Deja needs JavaScript to run.</p></noscript>
+<script>
+/* =====================================================================
+   Deja — illustrated flat-lay renderer for the sample demo.
+   Draws garments on canvas so the demo never depends on the network.
+   ===================================================================== */
+const Art = (() => {
+  // Each garment: unit box width 100, height H; `body` fill path, `lines` detail paths.
+  const G = {
+    tee: { H:100, body:"M30 6 L41 2 Q50 10 59 2 L70 6 L94 22 L84 40 L72 33 L73 98 L27 98 L28 33 L16 40 L6 22 Z",
+      lines:["M41 2 Q50 12 59 2","M28 92 L73 92","M16 40 L6 22","M72 33 L72 40"] },
+    longsleeve: { H:100, body:"M31 5 L41 2 Q50 9 59 2 L69 5 Q82 9 86 24 L99 86 L86 90 L74 42 L74 98 L26 98 L26 42 L14 90 L1 86 L14 24 Q18 9 31 5 Z",
+      lines:["M41 2 Q50 11 59 2","M26 92 L74 92","M88 84 L98 81","M12 84 L2 81"] },
+    shirt: { H:100, body:"M31 5 L41 2 Q50 6 59 2 L69 5 Q82 9 86 24 L99 86 L86 90 L74 42 L74 98 L26 98 L26 42 L14 90 L1 86 L14 24 Q18 9 31 5 Z",
+      lines:["M41 2 L46 16 L50 10 L54 16 L59 2","M50 10 L50 98","M88 84 L98 81","M12 84 L2 81","M30 30 L40 30"], dots:[[50,26],[50,42],[50,58],[50,74],[50,90]] },
+    cardigan: { H:100, body:"M31 5 L41 2 Q50 4 59 2 L69 5 Q82 9 86 24 L99 86 L86 90 L74 42 L74 98 L26 98 L26 42 L14 90 L1 86 L14 24 Q18 9 31 5 Z",
+      lines:["M41 2 L50 34 L59 2","M50 34 L50 98","M26 92 L74 92","M88 84 L98 81","M12 84 L2 81"], dots:[[50,46],[50,60],[50,74],[50,88]] },
+    blazer: { H:112, body:"M30 4 L42 1 L50 30 L58 1 L70 4 Q84 9 88 26 L99 100 L86 103 L76 46 L77 110 L23 110 L24 46 L14 103 L1 100 L12 26 Q16 9 30 4 Z",
+      lines:["M42 1 L35 22 L45 28 L50 58","M58 1 L65 22 L55 28 L50 58","M50 58 L50 110","M30 80 L44 80","M56 80 L70 80","M66 36 L73 36"], dots:[[50,68],[50,84]] },
+    coat: { H:140, body:"M30 4 L42 1 L50 30 L58 1 L70 4 Q84 9 88 26 L99 116 L86 119 L76 46 L79 138 L21 138 L24 46 L14 119 L1 116 L12 26 Q16 9 30 4 Z",
+      lines:["M42 1 L33 24 L45 30 L50 60","M58 1 L67 24 L55 30 L50 60","M50 60 L50 138","M24 72 L76 72","M24 78 L76 78","M28 96 L42 96","M58 96 L72 96"], dots:[[44,64],[56,64],[44,88],[56,88]] },
+    leather: { H:90, body:"M28 6 L42 2 L50 12 L58 2 L72 6 Q86 11 88 26 L99 84 L86 87 L76 40 L77 88 L23 88 L24 40 L14 87 L1 84 L12 26 Q14 11 28 6 Z",
+      lines:["M42 2 L31 20 L45 27","M58 2 L68 17 L55 23","M45 14 L58 88","M24 80 L77 80","M30 46 L42 44","M62 52 L72 50"], collar:true },
+    cami: { H:80, body:"M28 0 L32 0 L35 18 Q50 27 65 18 L68 0 L72 0 L73 22 Q77 50 75 78 L25 78 Q23 50 27 22 Z",
+      lines:["M35 18 Q50 27 65 18","M35 34 L65 34","M38 48 L62 48","M40 62 L60 62"], bows:[[50,34],[50,48],[50,62]] },
+    jeans: { H:130, body:"M20 2 L80 2 L84 128 L58 128 L50 38 L42 128 L16 128 Z",
+      lines:["M20 9 L80 9","M50 9 L50 36","M23 12 Q30 22 36 12","M77 12 Q70 22 64 12","M17 120 L42 120","M58 120 L83 120"] },
+    trousers: { H:130, body:"M22 2 L78 2 L94 128 L56 128 L50 40 L44 128 L6 128 Z",
+      lines:["M22 9 L78 9","M50 9 L50 34","M32 12 L24 128","M68 12 L76 128"] },
+    miniskirt: { H:62, body:"M28 2 L72 2 L86 60 L14 60 Z", lines:["M28 8 L72 8"] },
+    midiskirt: { H:100, body:"M30 2 L70 2 L90 98 L10 98 Z", lines:["M30 8 L70 8"] },
+    pleated: { H:100, body:"M30 2 L70 2 L92 98 L8 98 Z", lines:["M30 8 L70 8","M36 8 L24 98","M42 8 L40 98","M50 8 L50 98","M58 8 L60 98","M64 8 L76 98"] },
+    slip: { H:150, body:"M35 0 L38 0 L41 22 Q50 30 59 22 L62 0 L65 0 L68 34 Q71 52 68 64 L86 148 L14 148 L32 64 Q29 52 32 34 Z",
+      lines:["M41 22 Q50 30 59 22","M32 64 Q50 70 68 64"] },
+    tote: { H:100, body:"M10 36 L90 36 L84 98 L16 98 Z", handle:"M30 36 Q30 6 50 6 Q70 6 70 36", lines:["M12 44 L88 44"] },
+    minibag: { H:70, body:"M8 26 Q8 18 16 18 L84 18 Q92 18 92 26 L92 62 Q92 68 86 68 L14 68 Q8 68 8 62 Z", handle:"M16 20 Q50 -18 84 20", lines:["M8 26 L50 46 L92 26"], dots:[[50,46]] },
+    // shoes (single, pair drawn by renderer)
+    flat: { H:50, body:"M4 40 Q3 28 14 27 Q28 26 40 31 Q58 37 76 29 Q90 25 96 36 Q99 46 86 46 L12 46 Q4 46 4 40 Z", lines:["M14 29 Q40 38 76 30"], bowAt:[70,32], sole:"M8 45 L92 45" },
+    loafer: { H:50, body:"M4 42 Q3 24 16 22 L40 20 Q52 19 62 23 Q80 23 92 32 Q99 39 96 46 L6 46 Q4 46 4 42 Z", lines:["M44 25 L72 28","M40 20 Q44 30 62 23"], sole:"M6 45 L95 45" },
+    sneaker: { H:50, body:"M4 36 Q4 20 16 16 L44 10 Q52 22 66 22 L82 24 Q96 28 96 40 L96 46 L4 46 Z", sole:"M5 43 L95 43", lines:["M4 39 L96 39","M46 14 L52 22","M40 15 L46 23","M34 17 L40 24","M60 30 L78 30"] },
+    heel: { H:50, body:"M2 44 Q6 30 24 28 Q46 26 62 16 Q76 8 90 8 L94 12 L86 22 L84 46 L78 46 L76 28 Q56 44 30 46 Z", lines:["M24 30 Q40 34 60 22"], sole:"M4 45 Q40 46 76 30" },
+    boot: { H:80, body:"M20 2 L56 2 L58 46 Q80 50 94 60 Q98 72 86 76 L14 76 L12 62 Q18 40 20 2 Z", lines:["M20 8 L56 8","M50 2 L52 44"], sole:"M13 74 L90 74" },
+    sandal: { H:50, body:"M6 38 Q6 32 18 32 L84 30 Q96 32 96 38 L96 44 L6 44 Z", straps:["M28 32 Q40 8 60 30","M50 31 Q62 14 78 30"] },
+  };
+  const SHOES = new Set(["flat","loafer","sneaker","heel","boot","sandal"]);
+
+  const hex = h => { h=h.replace("#",""); return [0,2,4].map(i=>parseInt(h.slice(i,i+2),16)); };
+  const shade = (h, a) => { const c = hex(h).map(v => Math.max(0,Math.min(255, Math.round(a<0? v*(1+a) : v+(255-v)*a)))); return `rgb(${c[0]},${c[1]},${c[2]})`; };
+  const lum = h => { const [r,g,b]=hex(h); return (0.299*r+0.587*g+0.114*b)/255; };
+
+  function pattern(ctx, it, W, H) {
+    const p = it.pattern; if (!p) return;
+    ctx.save();
+    if (p === "stripe") { ctx.fillStyle = it.stripe || "#1F2A44"; const gap = it.gap || 9; for (let y = 10; y < H; y += gap) ctx.fillRect(-10, y, W+20, gap*0.42); }
+    if (p === "denim") {
+      ctx.globalAlpha = .13; ctx.strokeStyle = "#fff"; ctx.lineWidth = .6;
+      for (let i = -H; i < W+H; i += 2.2) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i+H*.5,H); ctx.stroke(); }
+      ctx.globalAlpha = .22; const g = ctx.createRadialGradient(W*.33,H*.45,2,W*.33,H*.45,W*.28); g.addColorStop(0,"#fff"); g.addColorStop(1,"rgba(255,255,255,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,W,H); const g2 = ctx.createRadialGradient(W*.67,H*.45,2,W*.67,H*.45,W*.28); g2.addColorStop(0,"#fff"); g2.addColorStop(1,"rgba(255,255,255,0)"); ctx.fillStyle=g2; ctx.fillRect(0,0,W,H);
+    }
+    if (p === "rib") { ctx.globalAlpha = .13; ctx.strokeStyle = "#000"; ctx.lineWidth = 1; for (let x = 3; x < W; x += 3.4) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); } }
+    if (p === "satin") { const g = ctx.createLinearGradient(0,0,W,H); [[0,.0],[.28,.38],[.36,.05],[.6,.3],[.7,0],[1,.18]].forEach(([s,a])=>g.addColorStop(s,`rgba(255,255,255,${a})`)); ctx.fillStyle=g; ctx.fillRect(0,0,W,H); }
+    if (p === "leather") { const g = ctx.createLinearGradient(0,0,W,H*.7); [[0,0],[.3,.16],[.42,0],[.7,.1],[1,0]].forEach(([s,a])=>g.addColorStop(s,`rgba(255,255,255,${a})`)); ctx.fillStyle=g; ctx.fillRect(0,0,W,H); }
+    if (p === "linen") { ctx.globalAlpha=.07; ctx.strokeStyle="#6b5a3a"; ctx.lineWidth=.5; for (let y=0;y<H;y+=2.5){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y+Math.sin(y)*.6);ctx.stroke();} }
+    if (p === "straw") { ctx.globalAlpha=.25; ctx.strokeStyle=shade(it.color,-.25); ctx.lineWidth=1; for (let y=0;y<H;y+=4){ for (let x=(y/4)%2?0:4;x<W;x+=8){ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+4,y+4);ctx.stroke();} } }
+    ctx.restore();
+  }
+
+  function drawOne(ctx, it, ox, oy, sx, sy, W, H, flip) {
+    const g = G[it.kind], dark = lum(it.color) < .28;
+    const body = new Path2D(g.body);
+    ctx.save();
+    ctx.translate(ox, oy);
+    if (flip) { ctx.translate(100*sx, 0); ctx.scale(-1, 1); }
+    ctx.scale(sx, sy);
+    // soft cast shadow (flat-lay)
+    ctx.save(); ctx.shadowColor = "rgba(70,40,50,.22)"; ctx.shadowBlur = 22; ctx.shadowOffsetY = 10;
+    ctx.fillStyle = it.color; ctx.fill(body); ctx.restore();
+    if (g.handle) { ctx.save(); ctx.lineWidth = (it.kind==="minibag"?1.4:4.5)/1; ctx.strokeStyle = it.kind==="minibag" ? (it.hardware||"#C9A55A") : shade(it.color,-.18); ctx.lineCap="round"; ctx.shadowColor="rgba(70,40,50,.2)"; ctx.shadowBlur=8; ctx.shadowOffsetY=4; ctx.stroke(new Path2D(g.handle)); ctx.restore(); }
+    if (g.straps) { ctx.save(); ctx.lineWidth = 3.4; ctx.lineCap="round"; ctx.strokeStyle = shade(it.color,-.12); g.straps.forEach(s=>ctx.stroke(new Path2D(s))); ctx.restore(); }
+    // fabric pattern + dimensional shading, clipped to garment
+    ctx.save(); ctx.clip(body);
+    pattern(ctx, it, 100, g.H);
+    const sh = ctx.createLinearGradient(0, 0, 100, g.H);
+    sh.addColorStop(0, "rgba(255,255,255,.14)"); sh.addColorStop(.55, "rgba(255,255,255,0)"); sh.addColorStop(1, "rgba(0,0,0,.10)");
+    ctx.fillStyle = sh; ctx.fillRect(0, 0, 100, g.H);
+    ctx.restore();
+    // outline + construction lines
+    ctx.lineJoin = "round"; ctx.lineCap = "round";
+    ctx.strokeStyle = dark ? "rgba(255,255,255,.16)" : shade(it.color, -.28);
+    ctx.lineWidth = 0.9; ctx.stroke(body);
+    ctx.strokeStyle = dark ? "rgba(255,255,255,.22)" : shade(it.color, -.2);
+    ctx.lineWidth = 0.7;
+    (g.lines||[]).forEach(l => ctx.stroke(new Path2D(l)));
+    if (it.kind==="jeans" || it.kind==="trousers") { ctx.save(); ctx.setLineDash([1.4,1.2]); ctx.strokeStyle = it.pattern==="denim" ? "rgba(214,160,80,.8)" : ctx.strokeStyle; ctx.lineWidth=.5; ctx.stroke(new Path2D("M22 12 L78 12")); ctx.restore(); }
+    (g.dots||[]).forEach(([x,y]) => { ctx.beginPath(); ctx.arc(x,y,1.4,0,Math.PI*2); ctx.fillStyle = it.button || (dark ? "#CFC6B6" : shade(it.color,-.35)); ctx.fill(); });
+    (g.bows||[]).forEach(([x,y]) => { ctx.fillStyle = it.accent || "#1A1A1A"; ctx.beginPath(); ctx.ellipse(x-3,y,3,1.6,-.3,0,Math.PI*2); ctx.ellipse(x+3,y,3,1.6,.3,0,Math.PI*2); ctx.fill(); ctx.strokeStyle=it.accent||"#1A1A1A"; ctx.lineWidth=.7; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x-2,y+7); ctx.moveTo(x,y); ctx.lineTo(x+2,y+7); ctx.stroke(); });
+    if (g.bowAt) { const [x,y]=g.bowAt; ctx.fillStyle = shade(it.color, dark?.35:-.3); ctx.beginPath(); ctx.ellipse(x-2.6,y,2.6,1.4,0,0,Math.PI*2); ctx.ellipse(x+2.6,y,2.6,1.4,0,0,Math.PI*2); ctx.fill(); }
+    if (g.collar && it.shearling) { ctx.save(); ctx.fillStyle = it.shearling; ctx.shadowColor="rgba(0,0,0,.18)"; ctx.shadowBlur=3; ctx.fill(new Path2D("M28 6 L42 2 L50 12 L58 2 L72 6 L68 18 L56 24 L50 14 L44 27 L30 21 Z")); ctx.restore(); }
+    if (g.sole) { ctx.save(); ctx.strokeStyle = it.sole || (dark ? "#050505" : shade(it.color,-.32)); ctx.lineWidth = 2.4; ctx.stroke(new Path2D(g.sole)); ctx.restore(); }
+    ctx.restore();
+  }
+
+  function drawItem(ctx, it) {
+    const g = G[it.kind];
+    const sx = it.w / 100, sy = it.h / g.H;
+    ctx.save();
+    ctx.translate(it.x + it.w/2, it.y + it.h/2);
+    ctx.rotate((it.rot||0) * Math.PI/180);
+    ctx.translate(-it.w/2, -it.h/2);
+    if (SHOES.has(it.kind)) {
+      const k = sx*.74;
+      drawOne(ctx, it, 0, 0, k, k, 100, g.H, false);
+      drawOne(ctx, it, it.w*.34, g.H*k*.62, k, k, 100, g.H, false);
+    } else drawOne(ctx, it, 0, 0, sx, sy, 100, g.H, it.flip);
+    ctx.restore();
+  }
+
+  function ground(ctx, W, H, bg) {
+    const base = bg.color;
+    ctx.fillStyle = base; ctx.fillRect(0,0,W,H);
+    if (bg.light) { const g = ctx.createLinearGradient(0,0,W,H); g.addColorStop(0,"rgba(255,248,235,.55)"); g.addColorStop(.45,"rgba(255,248,235,0)"); ctx.fillStyle=g; ctx.fillRect(0,0,W,H); }
+    if (bg.floor) { ctx.globalAlpha=.08; ctx.strokeStyle="#000"; for(let x=0;x<W;x+=W/5){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x+40,H);ctx.stroke();} ctx.globalAlpha=1; }
+    // paper grain so it reads like a photo, not a vector
+    const img = ctx.getImageData(0,0,W,H), d = img.data;
+    let seed = 7; const rnd = () => ((seed = (seed*16807) % 2147483647) / 2147483647);
+    for (let i=0;i<d.length;i+=4){ const n=(rnd()-.5)*(bg.grain||9); d[i]+=n; d[i+1]+=n; d[i+2]+=n; }
+    ctx.putImageData(img,0,0);
+    const v = ctx.createRadialGradient(W/2,H/2,H*.25,W/2,H/2,H*.8); v.addColorStop(0,"rgba(0,0,0,0)"); v.addColorStop(1, bg.vignette || "rgba(60,30,40,.12)");
+    ctx.fillStyle=v; ctx.fillRect(0,0,W,H);
+  }
+
+  const cache = new Map();
+  function render(key, spec, W=600, H=800, type="image/jpeg") {
+    if (cache.has(key)) return cache.get(key);
+    const c = document.createElement("canvas"); c.width = W; c.height = H;
+    const ctx = c.getContext("2d");
+    ground(ctx, W, H, spec.bg);
+    spec.items.forEach(it => drawItem(ctx, it));
+    const url = c.toDataURL(type, .88);
+    cache.set(key, url);
+    return url;
+  }
+  return { render, G };
+})();
+/* =====================================================================
+   Sample demo data — kept entirely separate from the user's wardrobe.
+   ===================================================================== */
+const DEMO = (() => {
+  const S = (x,y,w,h,rot=0) => ({x,y,w,h,rot});
+  const outfits = [
+    { id:"d-breton", name:"Breton weekend", tags:["French casual","Stripes","Denim"],
+      description:"Ecru and navy Breton-stripe long-sleeve top, straight mid-blue jeans, black ballet flats and a tan leather tote.",
+      palette:["ecru","navy","mid-blue denim","black","tan"], silhouette:"Fitted top over straight-leg jeans", layering:"Single layer", formality:"casual", occasions:["Everyday"],
+      spec:{ bg:{color:"#F2EDE8",light:true}, items:[
+        {kind:"tote", color:"#C49A6C", ...S(28,400,170,170,-7)},
+        {kind:"longsleeve", color:"#F3EFE5", pattern:"stripe", stripe:"#22304F", ...S(150,50,300,300,-2)},
+        {kind:"jeans", color:"#6F90B9", pattern:"denim", ...S(200,352,210,273,3)},
+        {kind:"flat", color:"#1B1B1C", ...S(385,640,160,80,-9)} ]}},
+    { id:"d-camel", name:"Camel coat days", tags:["Classic","Layered","Warm neutrals"],
+      description:"Long camel wool coat over a cream ribbed sweater, dark indigo straight jeans and brown leather loafers.",
+      palette:["camel","cream","dark indigo","brown"], silhouette:"Long straight coat, relaxed knit, straight jeans", layering:"Coat over knit", formality:"smart casual", occasions:["Everyday","Work"],
+      spec:{ bg:{color:"#EFE9E3",light:true}, items:[
+        {kind:"jeans", color:"#2E3B57", pattern:"denim", ...S(345,330,185,240,3)},
+        {kind:"longsleeve", color:"#EEE5D3", pattern:"rib", ...S(300,60,250,250,5)},
+        {kind:"coat", color:"#BD9166", ...S(40,40,280,392,-3)},
+        {kind:"loafer", color:"#5B3B28", ...S(80,640,160,80,-5)} ]}},
+    { id:"d-blazer", name:"Black blazer set", tags:["Minimal","Tailored","Monochrome"],
+      description:"Sharp black single-breasted blazer, crisp white T-shirt, black wide-leg trousers and white leather sneakers.",
+      palette:["black","white"], silhouette:"Structured blazer with fluid wide-leg trousers", layering:"Blazer over tee", formality:"smart casual to business", occasions:["Work","Everyday"],
+      spec:{ bg:{color:"#EEECEA",light:true}, items:[
+        {kind:"tee", color:"#FBFAF7", ...S(320,55,235,235,4)},
+        {kind:"trousers", color:"#232226", ...S(300,315,230,299,2)},
+        {kind:"blazer", color:"#1D1C1F", ...S(40,40,280,314,-3)},
+        {kind:"sneaker", color:"#F5F4F0", sole:"#D9D6CF", ...S(60,600,170,85,-6)} ]}},
+    { id:"d-leather", name:"Leather & denim", tags:["Edgy","Denim","Night out"],
+      description:"Black leather biker jacket, soft grey T-shirt, light-wash straight jeans and black leather ankle boots.",
+      palette:["black","heather grey","light-wash denim"], silhouette:"Cropped biker jacket over straight jeans", layering:"Jacket over tee", formality:"casual", occasions:["Going out","Everyday"],
+      spec:{ bg:{color:"#ECE9E6",light:true}, items:[
+        {kind:"tee", color:"#9EA1A6", ...S(330,60,220,220,5)},
+        {kind:"jeans", color:"#A5BED8", pattern:"denim", ...S(305,320,210,273,2)},
+        {kind:"leather", color:"#161617", pattern:"leather", ...S(35,50,300,270,-3)},
+        {kind:"boot", color:"#161617", pattern:"leather", ...S(70,520,170,136,-4)} ]}},
+    { id:"d-slip", name:"Satin slip night", tags:["Evening","Satin","Minimal"],
+      description:"Champagne bias-cut satin slip dress, black pointed pumps and a small black shoulder bag with a gold chain.",
+      palette:["champagne","black","gold"], silhouette:"Long fluid slip dress", layering:"Single layer", formality:"evening", occasions:["Date night","Going out"],
+      spec:{ bg:{color:"#EDE6E2",light:true}, items:[
+        {kind:"slip", color:"#D8C2A3", pattern:"satin", ...S(175,30,240,360,-2)},
+        {kind:"minibag", color:"#1B1A1C", pattern:"leather", ...S(385,500,160,112,7)},
+        {kind:"heel", color:"#19181A", pattern:"leather", ...S(60,600,180,90,-6)} ]}},
+    { id:"d-red", name:"Red knit date", tags:["Colour pop","Knit","Date"],
+      description:"Fitted red ribbed long-sleeve knit, black A-line midi skirt and black pointed pumps.",
+      palette:["red","black"], silhouette:"Fitted knit tucked into an A-line midi skirt", layering:"Single layer", formality:"smart casual to evening", occasions:["Date night","Going out"],
+      spec:{ bg:{color:"#EFE8E6",light:true}, items:[
+        {kind:"midiskirt", color:"#1C1B1E", pattern:"satin", ...S(165,330,260,260,2)},
+        {kind:"longsleeve", color:"#B3263A", pattern:"rib", ...S(150,40,290,290,-2)},
+        {kind:"heel", color:"#19181A", pattern:"leather", ...S(380,620,180,90,8)} ]}},
+    { id:"d-linen", name:"Linen neutrals", tags:["Relaxed","Neutrals","Summer"],
+      description:"White linen button-up shirt, beige wide-leg trousers, tan strappy sandals and a straw tote.",
+      palette:["white","beige","tan","straw"], silhouette:"Loose shirt over high-waisted wide-leg trousers", layering:"Single layer", formality:"smart casual", occasions:["Work","Everyday"],
+      spec:{ bg:{color:"#F1ECE4",light:true}, items:[
+        {kind:"tote", color:"#D8BF8C", pattern:"straw", ...S(40,370,175,175,-8)},
+        {kind:"trousers", color:"#CDB794", pattern:"linen", ...S(310,250,230,299,3)},
+        {kind:"shirt", color:"#F8F6F0", pattern:"linen", ...S(60,40,290,290,-3)},
+        {kind:"sandal", color:"#B98A5A", ...S(80,630,180,90,-5)} ]}},
+    { id:"d-pleat", name:"Pleated & pink", tags:["Soft","Feminine","Everyday"],
+      description:"Pale pink V-neck cardigan, cream pleated midi skirt and white low-top sneakers.",
+      palette:["pale pink","cream","white"], silhouette:"Soft cardigan with a swishy pleated midi", layering:"Cardigan as top", formality:"casual", occasions:["Everyday"],
+      spec:{ bg:{color:"#F2ECEB",light:true}, items:[
+        {kind:"pleated", color:"#ECE2CF", ...S(300,285,250,250,3)},
+        {kind:"cardigan", color:"#EBC1CD", pattern:"rib", ...S(60,40,290,290,-2)},
+        {kind:"sneaker", color:"#F6F5F1", sole:"#DAD6CE", ...S(70,610,170,85,-4)} ]}},
+  ];
+
+  const inspirations = [
+    { id:"i-paris", name:"Parisian stripes", summary:"Navy-and-ecru stripes, cropped straight denim, red flats",
+      spec:{ bg:{color:"#E3DAD0",light:true,grain:12,vignette:"rgba(60,40,20,.18)"}, items:[
+        {kind:"minibag", color:"#1A1A1B", pattern:"leather", ...S(400,420,150,105,10)},
+        {kind:"longsleeve", color:"#F1EBDD", pattern:"stripe", stripe:"#1C2745", gap:7, ...S(110,40,300,300,3)},
+        {kind:"jeans", color:"#5E80AC", pattern:"denim", ...S(170,330,220,250,-3)},
+        {kind:"flat", color:"#B0232E", ...S(360,640,170,85,-12)} ]}},
+    { id:"i-tailor", name:"Quiet tailoring", summary:"Oversized charcoal blazer, crisp shirt, wide black trousers",
+      spec:{ bg:{color:"#D8D4CF",light:true,grain:10,floor:true}, items:[
+        {kind:"shirt", color:"#F7F7F5", ...S(330,50,230,230,6)},
+        {kind:"trousers", color:"#1E1D20", ...S(300,300,240,312,2)},
+        {kind:"blazer", color:"#3B3A3E", ...S(25,40,310,348,-4)},
+        {kind:"loafer", color:"#141415", pattern:"leather", ...S(70,610,180,90,-6)} ]}},
+    { id:"i-red", name:"Red evening", summary:"Red satin slip, black pumps, a small gold bag",
+      spec:{ bg:{color:"#2A191E",light:true,grain:14,vignette:"rgba(0,0,0,.45)"}, items:[
+        {kind:"slip", color:"#B3132E", pattern:"satin", ...S(160,30,250,375,3)},
+        {kind:"minibag", color:"#C7A357", pattern:"satin", hardware:"#E6CD86", ...S(395,470,150,105,-8)},
+        {kind:"heel", color:"#121113", pattern:"leather", sole:"#000", ...S(60,610,190,95,-8)} ]}},
+  ];
+
+  // Predefined, consistent matches for the three samples (labelled "Demo suggestions").
+  const matches = {
+    "i-paris": [
+      { id:"d-breton", score:94, why:"Same navy-and-ecru stripe, same straight blue denim and flat shoes — this is the look almost piece for piece. Both keep it to a single, easy layer.",
+        tip:"Roll the jeans to a small cuff so the flats show — the inspiration's cropped hem is what makes it feel Parisian." },
+      { id:"d-leather", score:72, why:"Shares the casual denim base and a black accent, but the biker jacket makes it tougher than the inspiration's clean stripe.",
+        tip:"Wear the jacket open and push the sleeves up to keep it relaxed rather than rock-and-roll." },
+      { id:"d-camel", score:58, why:"Classic, neutral and denim-led like the inspiration, with loafers standing in for flats. The long coat adds a layer the inspiration doesn't have.",
+        tip:"Leave the coat open so the cream knit and jeans read first — that's closest to the inspiration's lighter feel." } ],
+    "i-tailor": [
+      { id:"d-blazer", score:91, why:"A dark blazer over a crisp white top with fluid wide-leg trousers — the same proportions and the same black-and-white restraint.",
+        tip:"Tuck the tee in fully and wear the blazer unbuttoned to get the inspiration's long, relaxed line." },
+      { id:"d-linen", score:74, why:"Matches the crisp shirt and wide-leg trouser silhouette, in a softer, lighter palette. No blazer, so it's less structured.",
+        tip:"Button the linen shirt to the top and half-tuck it — it sharpens the look toward tailoring." },
+      { id:"d-camel", score:63, why:"The long coat gives you the structured outer layer and the loafers match, but jeans are more casual than tailored trousers.",
+        tip:"Swap the order of focus: button the coat and let only the loafers and the jeans hem show." } ],
+    "i-red": [
+      { id:"d-red", score:88, why:"Red and black, fitted top half and pointed pumps — the colour story and the evening mood line up closely, even though yours is knit rather than satin.",
+        tip:"Push the sleeves to the elbow and tuck the knit in — it gets you closer to the slip's bare, streamlined shape." },
+      { id:"d-slip", score:76, why:"The same long satin slip silhouette and black pumps with a small bag. Champagne instead of red, so it's softer than the inspiration.",
+        tip:"Let the black bag and pumps do the contrast work — carry the bag short on the shoulder to echo the inspiration." },
+      { id:"d-leather", score:41, loose:true, why:"A loose match: it shares the black-and-evening edge, but denim and a biker jacket are far more casual than a satin slip.",
+        tip:"If this is the one you wear, keep it all-black on top and let the boots lead — it's the most evening this outfit gets." } ],
+  };
+
+  // Single-garment cutouts for the welcome collage (echoing the Figma frame).
+  const collage = [
+    { kind:"longsleeve", color:"#D5949C", pattern:"rib" },
+    { kind:"cami", color:"#EFE6D4", accent:"#1B1B1B" },
+    { kind:"leather", color:"#161617", pattern:"leather", shearling:"#E9DDC8" },
+    { kind:"flat", color:"#1B1B1C" },
+    { kind:"jeans", color:"#7F9EC4", pattern:"denim" },
+  ];
+  return { outfits, inspirations, matches, collage };
+})();
+
+function collageImage(i) {
+  const it = DEMO.collage[i];
+  const shoe = ["flat","loafer","sneaker","heel","sandal"].includes(it.kind);
+  const g = Art.G[it.kind];
+  const w = shoe ? 240 : 210, h = shoe ? 120 : Math.min(260, 210 * g.H / 100);
+  return Art.render("col-"+i, { bg:{color:"#FFFFFF",grain:3,vignette:"rgba(0,0,0,0)"}, items:[{...it, x:(300-w)/2, y:(400-h)/2 - (shoe?0:6), w, h, rot:0}] }, 300, 400);
+}
+const demoImage = o => Art.render(o.id, o.spec);
+/* =====================================================================
+   Core: helpers, storage (IndexedDB + memory fallback), images, state
+   ===================================================================== */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const uid = (p = "") => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const OCCASIONS = ["Everyday", "Work", "Date night", "Going out"];
+
+const I = {
+  upload:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5"/><path d="M4 14v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  check:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21l8 8 17-18"/></svg>',
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+  heart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-9-8.6C1.6 8.3 3.6 5 7 5c2 0 3.3 1 5 3 1.7-2 3-3 5-3 3.4 0 5.4 3.3 4 6.4-2 4.2-9 8.6-9 8.6z"/></svg>',
+  hanger:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 6.5a2 2 0 1 1 2.8 1.8c-.5.2-.8.7-.8 1.2V10"/><path d="M12 10 3 16.5c-.8.6-.4 1.5.5 1.5h17c.9 0 1.3-.9.5-1.5L12 10z"/></svg>',
+  spark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M11 3.5l1.9 5.1 5.1 1.9-5.1 1.9L11 17.5l-1.9-5.1L4 10.5l5.1-1.9z"/><path d="M18.5 15l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></svg>',
+  bookmark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3.5h11v17l-5.5-4-5.5 4z"/></svg>',
+  image:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M20.5 16l-5-5-8.5 8.5"/></svg>',
+  refresh:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg>',
+  info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></svg>',
+};
+
+/* ---------- Storage ---------- */
+const DB = (() => {
+  let db = null, mem = null;
+  const STORES = ["outfits", "inspirations", "saved"];
+  async function open() {
+    try {
+      if (!("indexedDB" in window)) throw 0;
+      db = await Promise.race([
+        new Promise((res, rej) => {
+          const r = indexedDB.open("deja", 1);
+          r.onupgradeneeded = () => { const d = r.result; STORES.forEach(n => d.objectStoreNames.contains(n) || d.createObjectStore(n, { keyPath: "id" })); d.objectStoreNames.contains("kv") || d.createObjectStore("kv"); };
+          r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); r.onblocked = () => rej(new Error("blocked"));
+        }),
+        sleep(4000).then(() => { throw new Error("timeout"); }),
+      ]);
+      try { navigator.storage?.persist?.(); } catch {}
+      return true;
+    } catch {
+      db = null; mem = { outfits:new Map(), inspirations:new Map(), saved:new Map(), kv:new Map() };
+      return false;
+    }
+  }
+  const req = (store, mode, fn) => new Promise((res, rej) => {
+    const t = db.transaction(store, mode), r = fn(t.objectStore(store));
+    t.oncomplete = () => res(r?.result); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error || new Error("aborted"));
+  });
+  return {
+    open,
+    get persistent() { return !!db; },
+    all: s => mem ? Promise.resolve([...mem[s].values()]) : req(s, "readonly", st => st.getAll()),
+    put: (s, v) => mem ? (mem[s].set(v.id, v), Promise.resolve()) : req(s, "readwrite", st => st.put(v)),
+    del: (s, k) => mem ? (mem[s].delete(k), Promise.resolve()) : req(s, "readwrite", st => st.delete(k)),
+    kvGet: k => mem ? Promise.resolve(mem.kv.get(k)) : req("kv", "readonly", st => st.get(k)),
+    kvSet: (k, v) => mem ? (mem.kv.set(k, v), Promise.resolve()) : req("kv", "readwrite", st => st.put(v, k)),
+    kvDel: k => mem ? (mem.kv.delete(k), Promise.resolve()) : req("kv", "readwrite", st => st.delete(k)),
+  };
+})();
+const ls = {
+  get(k, d) { try { const v = localStorage.getItem("deja." + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem("deja." + k, JSON.stringify(v)); } catch {} },
+};
+
+/* ---------- Images ---------- */
+const ACCEPT = "image/jpeg,image/png,image/webp,image/gif";
+class UploadError extends Error { constructor(code, msg) { super(msg); this.code = code; } }
+async function compress(file, max = 1400) {
+  const name = (file.name || "").toLowerCase();
+  if (/heic|heif/.test(file.type) || /\.hei[cf]$/.test(name)) throw new UploadError("type", "HEIC isn't supported — export it as JPEG");
+  if (!/^image\/(jpeg|png|webp|gif)$/.test(file.type)) throw new UploadError("type", file.type ? "Not a supported image" : "Unknown file type");
+  if (file.size > 40e6) throw new UploadError("size", "Over 40 MB — try a smaller photo");
+  let src;
+  try { src = await createImageBitmap(file, { imageOrientation: "from-image" }); }
+  catch {
+    src = await new Promise((res, rej) => { const u = URL.createObjectURL(file), im = new Image(); im.onload = () => { URL.revokeObjectURL(u); res(im); }; im.onerror = () => { URL.revokeObjectURL(u); rej(new UploadError("decode", "Couldn't read this image")); }; im.src = u; });
+  }
+  const w0 = src.width, h0 = src.height;
+  if (!w0 || !h0) throw new UploadError("decode", "Couldn't read this image");
+  const k = Math.min(1, max / Math.max(w0, h0)), w = Math.round(w0 * k), h = Math.round(h0 * k);
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  const ctx = c.getContext("2d"); ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, w, h); ctx.drawImage(src, 0, 0, w, h);
+  src.close?.();
+  const blob = await new Promise(r => c.toBlob(r, "image/jpeg", .84));
+  if (!blob) throw new UploadError("decode", "Couldn't process this image");
+  return { blob, w, h };
+}
+function dataUrlToBlob(u) {
+  const [head, b64] = u.split(","), type = head.match(/data:([^;]+)/)[1], bin = atob(b64), a = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i);
+  return new Blob([a], { type });
+}
+const urls = new Map();
+function blobUrl(key, blob) { if (!blob) return ""; if (!urls.has(key)) urls.set(key, URL.createObjectURL(blob)); return urls.get(key); }
+function dropUrl(key) { const u = urls.get(key); if (u) { URL.revokeObjectURL(u); urls.delete(key); } }
+
+/* ---------- State ---------- */
+const State = {
+  space: ls.get("space", "mine"),          // "mine" | "demo"
+  onboarded: ls.get("onboarded", false),
+  mine: [],                                // user's outfits (with blobs)
+  insp: new Map(),                         // uploaded inspirations id -> {id, blob}
+  saved: [],                               // saved looks (both spaces)
+  demo: { deleted: [], names: {}, tags: {} },
+  draft: { mine: null, demo: null },       // {ref:{kind,id}, occasion}
+  result: { mine: null, demo: null },      // last matches
+  batch: null,                             // current onboarding/upload batch id
+  uploads: [],                             // in-flight uploads for the current batch
+  persistent: true,
+};
+
+async function loadState() {
+  State.persistent = await DB.open();
+  const [mine, insp, saved, demo, dm, dd, rm, rd, batch] = await Promise.all([
+    DB.all("outfits"), DB.all("inspirations"), DB.all("saved"), DB.kvGet("demo"),
+    DB.kvGet("draft:mine"), DB.kvGet("draft:demo"), DB.kvGet("result:mine"), DB.kvGet("result:demo"), DB.kvGet("batch"),
+  ].map(p => p.catch(() => undefined)));
+  State.mine = (mine || []).sort((a, b) => b.createdAt - a.createdAt);
+  // analyses interrupted by a refresh go back to "not analysed"
+  State.mine.forEach(o => { if (o.analysisStatus === "pending") o.analysisStatus = "none"; });
+  (insp || []).forEach(x => State.insp.set(x.id, x));
+  State.saved = (saved || []).sort((a, b) => b.savedAt - a.savedAt);
+  if (demo) State.demo = { deleted: [], names: {}, tags: {}, ...demo };
+  State.draft = { mine: dm || null, demo: dd || null };
+  State.result = { mine: rm || null, demo: rd || null };
+  State.batch = batch || null;
+}
+
+const isDemo = () => State.space === "demo";
+function outfits(space = State.space) {
+  if (space === "demo") {
+    return DEMO.outfits.filter(o => !State.demo.deleted.includes(o.id)).map(o => ({
+      ...o, space: "demo", name: State.demo.names[o.id] ?? o.name, tags: State.demo.tags[o.id] ?? o.tags,
+      analysis: { description:o.description, palette:o.palette, silhouette:o.silhouette, layering:o.layering, formality:o.formality, occasions:o.occasions },
+      analysisStatus: "done",
+    }));
+  }
+  return State.mine;
+}
+const findOutfit = (id, space = State.space) => outfits(space).find(o => o.id === id);
+function outfitImg(o) { return !o ? "" : o.space === "demo" ? demoImage(DEMO.outfits.find(d => d.id === o.id)) : blobUrl(o.id, o.blob); }
+function inspImg(ref) {
+  if (!ref) return "";
+  if (ref.kind === "sample") { const s = DEMO.inspirations.find(x => x.id === ref.id); return s ? Art.render(s.id, s.spec) : ""; }
+  const x = State.insp.get(ref.id); return x ? blobUrl(x.id, x.blob) : "";
+}
+const inspName = ref => ref?.kind === "sample" ? (DEMO.inspirations.find(x => x.id === ref.id)?.name || "Sample inspiration") : "Your inspiration";
+
+async function saveOutfit(o) { await DB.put("outfits", o); }
+async function saveDemo() { await DB.kvSet("demo", State.demo); }
+async function setDraft(d) { State.draft[State.space] = d; await DB.kvSet("draft:" + State.space, d).catch(() => {}); }
+async function setResult(r) { State.result[State.space] = r; await DB.kvSet("result:" + State.space, r).catch(() => {}); }
+function setSpace(s) { State.space = s; ls.set("space", s); }
+function setOnboarded() { State.onboarded = true; ls.set("onboarded", true); }
+
+/* inspirations referenced by nothing are cleaned up */
+async function gcInspiration(id) {
+  if (!id) return;
+  const used = State.saved.some(s => s.insp?.id === id) || ["mine","demo"].some(sp => State.draft[sp]?.ref?.id === id || State.result[sp]?.insp?.id === id);
+  if (!used && State.insp.has(id)) { State.insp.delete(id); dropUrl(id); await DB.del("inspirations", id).catch(() => {}); }
+}
+
+/* ---------- UI utilities ---------- */
+let toastT;
+function toast(msg, bare) {
+  const t = $("#toast"); t.textContent = msg; t.classList.toggle("bare", !!bare); t.classList.add("show");
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 2600);
+}
+function ask({ title, body, ok = "OK", cancel = "Cancel", danger = false }) {
+  const d = $("#dlg");
+  d.innerHTML = `<form method="dialog"><h2>${esc(title)}</h2><p>${esc(body)}</p>
+    <div class="split"><button class="btn btn-light btn-sm" value="no">${esc(cancel)}</button>
+    <button class="btn btn-sm ${danger ? "btn-danger" : "btn-primary"}" value="yes" autofocus>${esc(ok)}</button></div></form>`;
+  return new Promise(res => {
+    d.onclose = () => res(d.returnValue === "yes");
+    d.returnValue = ""; d.showModal();
+  });
+}
+function strengthOf(score) { return score >= 80 ? ["s-strong","Strong match"] : score >= 55 ? ["s-good","Good match"] : ["s-loose","Loose match"]; }
+/* =====================================================================
+   Live image analysis through the Claude `sample` capability.
+   Calls run on the viewer's own Claude account via the platform —
+   no API keys live in this page. Every answer is validated before use.
+   ===================================================================== */
+const AI = (() => {
+  let sample = null;
+  const st = { status: "checking", reason: "" };   // checking | ready | text | unavailable
+  const listeners = new Set();
+  const set = (status, reason = "") => { st.status = status; st.reason = reason; listeners.forEach(f => f()); };
+  const PERMANENT = new Set(["not_granted","sampling_disabled","not_declared","capability_disabled","capability_removed","images_unavailable","session_expired"]);
+
+  async function init() {
+    try {
+      const res = await fetch('/api/gemini');
+      const config = await res.json();
+      if (!config.configured) return set("unavailable", "setup");
+      sample = { async json(prompt, options = {}) {
+        const images = await Promise.all((options.images || []).map(blob => new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve({ mimeType: blob.type, data: String(reader.result).split(',')[1] });
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        })));
+        const response = await fetch('/api/gemini', {
+          method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({prompt, images}), signal: options.signal
+        });
+        const result = await response.json();
+        if (!response.ok) { const error = new Error(result.error || 'Image analysis failed'); error.code = result.code; throw error; }
+        return result;
+      }};
+      set("ready");
+    } catch { set("unavailable", "setup"); }
+  }
+
+  function explain(code) {
+    switch (code) {
+      case "not_granted": return "Claude access wasn't allowed for this page. Reload to be asked again.";
+      case "sampling_disabled": return "Claude isn't available on this account.";
+      case "session_expired": return "Your Claude session expired — sign in again, then reload.";
+      case "rate_limited": return "Too many requests right now. Wait a minute and try again.";
+      case "image_rejected": return "That image couldn't be read. Try a different JPG or PNG.";
+      case "refused": return "Claude declined to analyse this image. Try a different one.";
+      case "invalid_json": case "empty_completion": return "The answer came back incomplete. Try again.";
+      case "cancelled": return "Stopped.";
+      default: return "Live analysis hit a problem. Try again in a moment.";
+    }
+  }
+  function fail(e) {
+    const code = e?.code || "upstream_error";
+    if (PERMANENT.has(code)) set("unavailable", code);
+    const err = new Error(e?.message || explain(code)); err.code = code; return err;
+  }
+
+  const str = (v, n = 240) => typeof v === "string" ? v.trim().slice(0, n) : "";
+  const arr = (v, n = 6, m = 40) => Array.isArray(v) ? v.map(x => str(x, m)).filter(Boolean).slice(0, n) : [];
+
+  async function analyzeOutfit(blob) {
+    if (!sample) throw fail({ code: "capability_disabled" });
+    const prompt = `You are the wardrobe reader for Deja, an outfit app. The attached image is a photo of an outfit the user owns — often a mirror selfie or a flat lay.
+Describe ONLY clothing, shoes and accessories that are clearly visible. Do not guess brands. Do not describe the person's face, body or identity.
+Reply with only a JSON object:
+{"is_outfit": true, "name": "2-4 word outfit name", "description": "1-2 sentences naming each visible garment with its colour", "palette": ["colour words"], "silhouette": "short phrase", "layering": "short phrase", "formality": "casual | smart casual | business | evening", "occasions": ["any of: Everyday, Work, Date night, Going out"], "tags": ["3 to 5 short style tags"]}
+If the image does not show wearable clothing, reply {"is_outfit": false}.`;
+    let r;
+    try { r = await sample.json(prompt, { images: [blob], modelTier: "quick" }); }
+    catch (e) { throw fail(e); }
+    if (!r || typeof r !== "object") throw fail({ code: "invalid_json" });
+    if (r.is_outfit === false) return { isOutfit: false };
+    const a = {
+      isOutfit: true, name: str(r.name, 40), description: str(r.description, 320),
+      palette: arr(r.palette), silhouette: str(r.silhouette, 90), layering: str(r.layering, 90),
+      formality: str(r.formality, 30), occasions: arr(r.occasions, 4, 20).filter(o => OCCASIONS.includes(o)),
+      tags: arr(r.tags, 5, 22),
+    };
+    if (!a.description) throw fail({ code: "invalid_json" });
+    return a;
+  }
+
+  function shape(r, list, k) {
+    if (!r || typeof r !== "object") throw fail({ code: "invalid_json" });
+    const ids = new Set(list.map(o => o.id)), seen = new Set();
+    const raw = Array.isArray(r.matches) ? r.matches : [];
+    const matches = raw
+      .filter(m => m && ids.has(String(m.id)) && !seen.has(String(m.id)) && seen.add(String(m.id)))
+      .map(m => ({ id: String(m.id), score: Math.max(0, Math.min(100, Math.round(Number(m.score) || 0))), why: str(m.why, 360), tip: str(m.tip, 260) }))
+      .filter(m => m.why)
+      .slice(0, k);
+    return {
+      isOutfit: r.inspiration?.is_outfit !== false,
+      summary: str(r.inspiration?.summary, 140),
+      note: str(r.note, 220),
+      matches, dropped: Math.max(0, raw.length - matches.length),
+    };
+  }
+
+  const RULES = `Rules:
+- Use ONLY ids from the wardrobe list. Never invent outfits or garments.
+- "why": 1-2 sentences naming concrete shared qualities, and the main real difference if there is one.
+- "tip": ONE practical styling tip using only garments already described in THAT outfit (tuck, roll, cuff, button, sleeve push, how to carry the bag). Never suggest buying, borrowing or adding anything.
+- "score": 0-100 similarity. Be honest — under 45 is a loose match, and "why" must say so plainly.`;
+  const SHAPE = `Reply with only a JSON object:
+{"inspiration": {"is_outfit": true, "summary": "one short line describing the inspiration look"}, "matches": [{"id": "...", "score": 0, "why": "...", "tip": "..."}], "note": "one sentence only if every match is weak, else empty"}`;
+
+  /* Text-only matching: used when this view cannot send images. Works from the
+     user's OWN written notes — never implies a photo was looked at. */
+  async function matchText(text, list, occasion, signal) {
+    if (!sample) throw fail({ code: "capability_disabled" });
+    const k = Math.min(3, list.length);
+    const wardrobe = list.map(o => ({ id: o.id, name: o.name, tags: o.tags || [], description: o.note || o.analysis?.description || "" }));
+    const prompt = `You are Deja, a stylist who only works with clothes the user already owns.
+You are working from WRITTEN DESCRIPTIONS, not photographs. You have not seen any image. Never say or imply that you looked at a photo.
+
+The user describes the look they want to recreate as:
+"${text}"
+
+${occasion ? `They are dressing for: ${occasion}. Weigh formality and mood for that occasion.` : "No occasion was chosen."}
+
+Below is their wardrobe — complete outfits they own, described in their own words.
+Rank up to ${k} of them that best capture the described look (colour, silhouette, layering, formality).
+${RULES}
+- Judge only from the written descriptions. Where a description is thin, say so in "why" rather than guessing.
+
+Wardrobe:
+${JSON.stringify(wardrobe)}
+
+${SHAPE}`;
+    let r;
+    try { r = await sample.json(prompt, { signal }); } catch (e) { throw fail(e); }
+    return shape(r, list, k);
+  }
+
+  async function match(inspBlob, list, occasion, signal) {
+    if (!sample) throw fail({ code: "capability_disabled" });
+    const k = Math.min(3, list.length);
+    const wardrobe = list.map(o => ({ id: o.id, name: o.name, tags: o.tags, ...o.analysis }));
+    wardrobe.forEach(w => { delete w.isOutfit; delete w.name_suggested; });
+    const prompt = `You are Deja, a stylist who only works with clothes the user already owns.
+The attached image is an INSPIRATION outfit (for example a Pinterest screenshot). Below is the user's wardrobe: complete outfits they own, each with an id and a description of what is visible in their own photo.
+${occasion ? `They are dressing for: ${occasion}. Weigh formality and mood for that occasion.` : "No occasion was chosen."}
+
+Rank up to ${k} wardrobe outfits that best capture the inspiration's look — colour palette, silhouette, layering and formality.
+Rules:
+- Use ONLY ids from the wardrobe list. Never invent outfits or garments.
+- "why": 1-2 sentences naming concrete shared qualities, and the main real difference if there is one.
+- "tip": ONE practical styling tip using only garments already visible in THAT outfit (tuck, roll, cuff, button, sleeve push, how to carry the bag). Never suggest buying, borrowing or adding anything.
+- "score": 0-100 visual similarity. Be honest — under 45 is a loose match, and "why" must say so plainly.
+- If the image shows no outfit, set "is_outfit" to false and return an empty "matches" list.
+
+Wardrobe:
+${JSON.stringify(wardrobe)}
+
+Reply with only a JSON object:
+{"inspiration": {"is_outfit": true, "summary": "one short line describing the inspiration look"}, "matches": [{"id": "...", "score": 0, "why": "...", "tip": "..."}], "note": "one sentence only if every match is weak, else empty"}`;
+    let r;
+    try { r = await sample.json(prompt, { images: [inspBlob], signal }); }
+    catch (e) { throw fail(e); }
+    return shape(r, list, k);
+  }
+
+  return { init, get status() { return st.status; }, get reason() { return st.reason; }, on: f => listeners.add(f), analyzeOutfit, match, matchText };
+})();
+
+/* ---------- Analysis queue: each wardrobe photo is analysed once ---------- */
+const Queue = (() => {
+  let running = false;
+  async function run() {
+    if (running || AI.status !== "ready") return;
+    running = true;
+    try {
+      for (;;) {
+        if (AI.status !== "ready") break;
+        const o = State.mine.find(x => x.analysisStatus === "none" && x.queued);
+        if (!o) break;
+        o.analysisStatus = "pending"; o.queued = false; refresh();
+        try {
+          const a = await AI.analyzeOutfit(o.blob);
+          if (!a.isOutfit) { o.analysisStatus = "not_outfit"; o.analysis = null; }
+          else {
+            o.analysis = a; o.analysisStatus = "done"; o.analysisError = "";
+            if (!o.nameEdited && a.name) o.name = a.name;
+            if (!o.tagsEdited && a.tags.length) o.tags = a.tags;
+          }
+        } catch (e) {
+          o.analysisStatus = e.code && ["not_granted","sampling_disabled","capability_disabled","session_expired"].includes(e.code) ? "none" : "failed";
+          o.analysisError = e.message;
+        }
+        if (State.mine.includes(o)) await saveOutfit(o).catch(() => {});
+        refresh();
+      }
+    } finally { running = false; }
+  }
+  function add(list) { list.forEach(o => { if (o.analysisStatus === "none" || o.analysisStatus === "failed") { o.analysisStatus = "none"; o.queued = true; } }); run(); }
+  return { add, run, get busy() { return running; } };
+})();
+/* =====================================================================
+   On-device matcher — no AI, no server, no key.
+   Used when Claude isn't reachable (e.g. the deployed site). It compares
+   the words in the user's description of a look with the words describing
+   each outfit (name, tags, the user's own note). It never looks at photos
+   and never claims to.
+   ===================================================================== */
+const Local = (() => {
+  // canonical concept -> [category, ...phrases]. Longer phrases are matched first.
+  const LEX = {
+    // colours
+    black:["c","black","jet","ebony","onyx"], white:["c","white","optic white","snow"],
+    cream:["c","cream","ecru","ivory","off white","oatmeal","bone","vanilla","champagne"],
+    beige:["c","beige","sand","stone","taupe","nude","khaki","oat"],
+    camel:["c","camel","tan","caramel","cognac","toffee","honey"],
+    brown:["c","brown","chocolate","coffee","mocha","espresso","chestnut"],
+    grey:["c","grey","gray","charcoal","heather","slate","ash"],
+    navy:["c","navy","midnight","dark blue","indigo","ink"],
+    blue:["c","blue","cobalt","royal blue","sky","light blue","baby blue","powder blue","light wash","mid blue","mid wash","denim blue","chambray"],
+    red:["c","red","scarlet","crimson","cherry","tomato","ruby"],
+    burgundy:["c","burgundy","wine","maroon","oxblood","bordeaux","merlot"],
+    pink:["c","pink","blush","rose","fuchsia","magenta","hot pink","dusty pink","pastel pink"],
+    purple:["c","purple","lilac","lavender","violet","plum","mauve"],
+    green:["c","green","olive","sage","emerald","forest","mint","khaki green"],
+    yellow:["c","yellow","mustard","butter","lemon"],
+    orange:["c","orange","rust","terracotta","burnt orange","coral"],
+    gold:["c","gold","golden","brass"], silver:["c","silver","metallic","chrome"],
+    // garments
+    jeans:["g","jeans","jean","denim"], trousers:["g","trousers","trouser","pants","slacks","chinos","tailored trousers","wide leg trousers"],
+    skirt:["g","skirt"], dress:["g","dress","slip dress","gown","sundress","slip"], shorts:["g","shorts"],
+    tee:["g","t shirt","tshirt","tee","tees","t shirts"], shirt:["g","shirt","blouse","button up","button down","oxford shirt"],
+    knit:["g","sweater","jumper","knit","knitwear","pullover","crewneck","turtleneck","roll neck"], cardigan:["g","cardigan","cardi"],
+    top:["g","top","cami","camisole","tank","bodysuit","corset","bustier","crop top","halter"],
+    blazer:["g","blazer","suit jacket","tailored jacket"], jacket:["g","jacket","bomber","biker jacket","leather jacket","denim jacket","shacket","moto jacket"],
+    coat:["g","coat","trench","trench coat","overcoat","parka","puffer","wool coat"],
+    flats:["g","flats","flat shoes","ballet flats","ballet","ballerinas","mary janes","mary jane"],
+    loafers:["g","loafers","loafer","brogues","penny loafers"], sneakers:["g","sneakers","sneaker","trainers","trainer","kicks"],
+    heels:["g","heels","heel","pumps","pump","stilettos","slingbacks","kitten heels","court shoes"],
+    boots:["g","boots","boot","ankle boots","chelsea boots","knee high boots","cowboy boots"], sandals:["g","sandals","sandal","mules","slides","strappy sandals"],
+    bag:["g","bag","tote","handbag","clutch","shoulder bag","purse","crossbody","mini bag"],
+    // fabric & pattern
+    stripes:["f","stripes","stripe","striped","breton","pinstripe"], leather:["f","leather","faux leather","pleather","biker"],
+    satin:["f","satin","silk","silky","sheen"], linen:["f","linen"], rib:["f","ribbed","rib","cable knit","chunky knit"],
+    wool:["f","wool","tweed","cashmere","mohair"], check:["f","check","plaid","gingham","houndstooth","tartan"],
+    floral:["f","floral","flowers","flower print"], lace:["f","lace","sheer","mesh"], sparkle:["f","sequin","sequins","sparkle","glitter","metallic"],
+    velvet:["f","velvet","velour","suede"], dots:["f","polka dot","polka dots","spots"],
+    // shape
+    wide:["s","wide","wide leg","palazzo","flared","flare","bootcut"], straight:["s","straight","straight leg"],
+    cropped:["s","cropped","crop","ankle length"], oversized:["s","oversized","boxy","relaxed fit","loose","baggy","slouchy"],
+    fitted:["s","fitted","slim","skinny","bodycon","tight","form fitting"], midi:["s","midi"], mini:["s","mini"], maxi:["s","maxi","floor length","long"],
+    highwaist:["s","high waisted","high waist","high rise"], layered:["s","layered","layers","layering"], tailored:["s","tailored","sharp","structured"],
+    pleated:["s","pleated","pleats","pleat"], aline:["s","a line"],
+    // mood
+    casual:["m","casual","relaxed","weekend","laid back","easy","everyday","off duty"], smart:["m","smart","polished","office","work","business","professional","smart casual"],
+    evening:["m","evening","night","night out","party","going out","dressy","glam","elegant","date","date night","cocktail"],
+    minimal:["m","minimal","minimalist","clean","simple","monochrome","neutral","neutrals","quiet luxury"], french:["m","french","parisian","paris"],
+    edgy:["m","edgy","rock","grunge","punk"], feminine:["m","feminine","romantic","soft","pretty","girly","delicate"], sporty:["m","sporty","athleisure","athletic"],
+    preppy:["m","preppy","classic","timeless"], boho:["m","boho","bohemian"], vintage:["m","vintage","retro","90s","70s","y2k"],
+  };
+  const W = { c: 1.0, g: 1.5, f: 1.2, s: 0.9, m: 0.7 };
+  const FAMILY = {
+    black:"dark", navy:"dark", grey:"dark", white:"light", cream:"light", beige:"light", camel:"warm", brown:"warm", blue:"blue", red:"red", burgundy:"red", pink:"red",
+    jeans:"bottom", trousers:"bottom", skirt:"skirtdress", dress:"skirtdress", tee:"top", shirt:"top", knit:"top", cardigan:"top", top:"top",
+    blazer:"outer", jacket:"outer", coat:"outer", flats:"flatshoe", loafers:"flatshoe", sneakers:"flatshoe", sandals:"flatshoe", heels:"dressshoe", boots:"dressshoe",
+    satin:"sleek", leather:"sleek", wool:"cosy", rib:"cosy", wide:"loose", oversized:"loose", straight:"line", fitted:"line", casual:"day", preppy:"day", smart:"polish", minimal:"polish", evening:"night", edgy:"night",
+  };
+  const OCC = { "Everyday": ["casual","french","preppy"], "Work": ["smart","tailored","minimal"], "Date night": ["evening","feminine","satin"], "Going out": ["evening","edgy","sparkle","leather"] };
+  const LABEL = { cropped:"cropped length", midi:"midi length", mini:"mini length", maxi:"long length", pleated:"pleats", highwaist:"high waist", tee:"T-shirt", flats:"flat shoes", knit:"knit", rib:"ribbed knit", highwaist:"high waist", aline:"A-line", stripes:"stripes", wide:"wide leg", straight:"straight line", check:"check", sparkle:"sparkle", evening:"evening mood", smart:"polished feel", casual:"easy, casual feel", minimal:"minimal feel", edgy:"edgy feel", feminine:"soft, feminine feel", french:"French feel", layered:"layering", tailored:"tailoring", oversized:"oversized shape", fitted:"fitted shape" };
+
+  // phrase index, longest first
+  const PHRASES = [];
+  for (const [k, [cat, ...ps]] of Object.entries(LEX)) for (const p of ps) PHRASES.push([p, k, cat]);
+  ["long sleeve","long sleeved","short sleeve","short sleeved","sleeveless"].forEach(p => PHRASES.push([p, null, null]));   // swallowed, no meaning
+  // phrases whose inner words should still count (a leather jacket is also leather)
+  const KEEP = new Set(["leather jacket","biker jacket","wool coat","cable knit","chunky knit","wide leg trousers","tailored trousers","tailored jacket"]);
+  PHRASES.sort((a, b) => b[0].length - a[0].length);
+
+  function concepts(text) {
+    let t = " " + String(text || "").toLowerCase().replace(/[‐-―-]/g, " ").replace(/[^a-z0-9 ]+/g, " ").replace(/\s+/g, " ") + " ";
+    const found = new Map();
+    for (const [p, k, cat] of PHRASES) {
+      const needle = " " + p + " ";
+      if (!t.includes(needle)) continue;
+      if (k) found.set(k, cat);
+      if (!KEEP.has(p)) t = t.split(needle).join(" ");
+    }
+    return found;
+  }
+  const outfitText = o => [o.name, (o.tags || []).join(" "), o.note, o.analysis?.description, (o.analysis?.palette || []).join(" "),
+    o.analysis?.silhouette, o.analysis?.layering, o.analysis?.formality, (o.analysis?.occasions || []).join(" ")].filter(Boolean).join(". ");
+
+  const label = k => LABEL[k] || k;
+  const join = (a, w = "and") => a.length <= 1 ? (a[0] || "") : a.slice(0, -1).join(", ") + ` ${w} ` + a[a.length - 1];
+
+  function tipFor(oc, ic) {
+    const has = k => oc.has(k), want = k => ic.has(k);
+    if (has("jeans") && (want("cropped") || want("flats") || want("loafers") || want("heels"))) return "Roll the jeans to a small cuff so the shoes show — it gives you the inspiration's cropped line.";
+    if (has("blazer")) return want("oversized") || want("casual") ? "Wear the blazer open with the sleeves pushed up for a relaxed line." : "Button the blazer once to sharpen the silhouette.";
+    if (has("coat")) return "Wear the coat open so the pieces underneath lead the look.";
+    if (has("jacket")) return "Keep the jacket open and push the sleeves up so it reads lighter.";
+    if (has("shirt")) return "Half-tuck the shirt at the front to define the waist.";
+    if (has("knit") || has("cardigan")) return want("fitted") || want("skirt") ? "Tuck the knit in to keep the waist defined." : "Push the sleeves to the elbow for an easier shape.";
+    if (has("tee")) return "Tuck the T-shirt in fully for a cleaner, longer line.";
+    if (has("dress")) return "Keep everything else simple and let the shoes and bag carry the contrast.";
+    if (has("skirt")) return "Tuck the top into the skirt so the waist sits high.";
+    if (has("trousers")) return "Let the trousers skim the top of the shoe for a long, unbroken line.";
+    if (has("bag")) return "Carry the bag short on the shoulder to echo the inspiration.";
+    return "Wear it as it is and let the piece closest to the inspiration lead.";
+  }
+
+  function match(text, list, occasion) {
+    const ic = concepts(text);
+    if (!ic.size) { const e = new Error("Deja couldn't find any colours, garments or shapes in that description. Try naming them — for example “navy stripes, straight jeans, flat shoes”."); e.code = "no_terms"; throw e; }
+    const total = [...ic.values()].reduce((s, c) => s + W[c], 0);
+    const occ = OCC[occasion] || [];
+    const scored = list.map(o => {
+      const oc = concepts(outfitText(o));
+      let got = 0; const exact = [], near = [], missing = [];
+      for (const [k, cat] of ic) {
+        if (oc.has(k)) { got += W[cat]; exact.push(k); continue; }
+        const fam = FAMILY[k] && [...oc.keys()].find(x => FAMILY[x] === FAMILY[k]);
+        if (fam) { got += W[cat] * .45; near.push([k, fam]); } else if (cat === "g" || cat === "c") missing.push(k);
+      }
+      const recall = got / total;
+      const union = new Set([...ic.keys(), ...oc.keys()]).size || 1;
+      const jacc = exact.length / union;
+      const occHit = occ.some(k => oc.has(k)) || (o.analysis?.occasions || []).includes(occasion) ? .06 : 0;
+      const score = oc.size ? Math.round(100 * Math.min(1, recall * .82 + jacc * .35 + occHit)) : 0;
+      return { o, oc, score, exact, near, missing };
+    }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, Math.min(3, list.length));
+
+    const matches = scored.map(({ o, oc, score, exact, near, missing }) => {
+      const cols = exact.filter(k => LEX[k][0] === "c"), gar = exact.filter(k => LEX[k][0] === "g"), rest = exact.filter(k => !["c","g"].includes(LEX[k][0]));
+      const bits = [];
+      if (cols.length) bits.push(`Same ${join(cols.map(label))} palette.`);
+      const common = [gar.length ? join(gar.map(label)) : "", rest.length ? `the ${join(rest.map(label))}` : ""].filter(Boolean);
+      if (common.length) bits.push(`In common: ${common.join(", plus ")}.`);
+      if (near.length) bits.push(`Close swap${near.length > 1 ? "s" : ""}: ${near.slice(0, 2).map(([k, f]) => `${label(f)} for ${label(k)}`).join("; ")}.`);
+      if (missing.length) bits.push(`The main difference: no ${join(missing.slice(0, 2).map(label), "or")} in this outfit.`);
+      let why = bits.length ? bits.join(" ") : "Only a loose family resemblance.";
+      if (score < 45) why = "A loose match — " + why.charAt(0).toLowerCase() + why.slice(1);
+      return { id: o.id, score, why, tip: tipFor(oc, ic) };
+    });
+    const note = !matches.length ? "Nothing in your wardrobe shares a colour, garment or shape with that description."
+      : matches.every(m => m.score < 55) ? "your notes don't overlap much with this look" : "";
+    return { isOutfit: true, summary: String(text).trim().slice(0, 120), note, matches, describedCount: list.filter(o => concepts(outfitText(o)).size).length };
+  }
+  return { match, concepts };
+})();
+/* =====================================================================
+   Views
+   ===================================================================== */
+const V = {};
+const route = () => (location.hash.replace(/^#\/?/, "") || "").split("/");
+const go = p => { if (location.hash === "#/" + p) render(); else location.hash = "#/" + p; };
+
+function nav(active) {
+  const item = (href, key, icon, label) => `<a href="#/${href}" ${active === key ? 'aria-current="page"' : ""}>${icon}<span>${label}</span></a>`;
+  return `<nav class="nav" aria-label="Main">${item("wardrobe","wardrobe",I.hanger,"Wardrobe")}${item("style","style",I.spark,"Style me")}${item("saved","saved",I.bookmark,"Saved")}</nav>`;
+}
+function topbar(extra = "") {
+  return `<header class="topbar">
+    <div class="left"><a href="#/wardrobe" class="icon-btn" style="width:auto;padding:0 10px;border-radius:12px;text-decoration:none" aria-label="Déjà home"><span class="wordmark">Déjà</span></a>
+    ${isDemo() ? `<span class="space-chip"><span class="dot"></span>Demo</span>` : ""}</div>
+    <div class="row" style="gap:2px;margin-right:-10px">${extra}</div></header>`;
+}
+function demoNotice() {
+  if (!isDemo()) return "";
+  return `<div class="notice" role="note">${I.info}<div>You're exploring a sample wardrobe. Sample inspirations get predefined <b>demo suggestions</b>.
+    <div class="actions"><button class="link" data-act="reset-demo">Reset demo</button><button class="link" data-act="exit-demo">Switch to my wardrobe</button></div></div></div>`;
+}
+function liveStatus() {
+  const s = AI.status;
+  if (s === "checking") return `<span class="live-status" role="status"><i></i>Checking live matching…</span>`;
+  if (s === "ready") return `<span class="live-status on" role="status"><i></i>Live matching on</span>`;
+  if (s === "text") return `<span class="live-status notes" role="status"><i></i>Matching from notes</span>`;
+  return `<span class="live-status notes" role="status"><i></i>Matching on your words</span>`;
+}
+/* notes modes: "text" = Claude reads your words; "unavailable" = the on-device matcher does */
+const isText = () => AI.status === "text" || AI.status === "unavailable";
+const isLocal = () => AI.status === "unavailable";
+const modeOf = r => r?.mode || (r?.demo ? "demo" : "live");
+const SRC = { demo: ["demo", "Demo suggestions", "Demo suggestion"], live: ["live", "Live match", "Live match"], notes: ["notes", "Matched from notes", "Matched from notes"], local: ["notes", "Matched on your words", "Matched on your words"] };
+function sourceTag(r, single) { const [cls, many, one] = SRC[modeOf(r)] || SRC.live; return `<span class="source ${cls}"><i></i>${single ? one : many}</span>`; }
+const NOTES_CLAUDE = "This account can't send photos to Claude, so Deja matches on what you write rather than on the pictures.";
+const NOTES_LOCAL = "Deja matches on what you write — a line about the look you want and a line about each outfit. It runs on this device; photos aren't analysed.";
+Object.defineProperty(window, "NOTES_WHY", { get: () => isLocal() ? NOTES_LOCAL : NOTES_CLAUDE });
+function needsNote(o) { return o.space !== "demo" && !o.note && !(o.analysis && o.analysisStatus === "done"); }
+function aiUnavailableCopy() {
+  const r = AI.reason;
+  if (r === "not_granted") return "Claude access wasn't allowed for this page, so Deja can't read your photos. Reload the page to be asked again.";
+  if (r === "images") return "This view can't send images to Claude, so Deja can't read your photos here.";
+  if (r === "runtime") return "Live matching needs the Gemini connection. Your photos are still saved on this device.";
+  return "Live matching is not connected. Add GEMINI_API_KEY in Vercel and redeploy; your photos are still saved.";
+}
+
+/* ---------- 1. Welcome ---------- */
+V.welcome = () => `
+<section class="screen onb" aria-labelledby="h">
+  <div class="glow hero"></div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding-top:24px">
+    <h1 id="h" class="wordmark" tabindex="-1" style="font-size:64px;text-align:center;margin:0">Déjà</h1>
+    <div class="collage" aria-hidden="true">${[0,1,2,3,4].map(i => `<div class="polaroid"><div class="photo"><img src="${collageImage(i)}" alt=""></div></div>`).join("")}</div>
+    <p class="h-display" style="margin-top:34px">New inspiration.<br><em class="s">Already yours.</em></p>
+    <ol class="how">
+      <li><b>1</b><span>Add photos of outfits you already own.</span></li>
+      <li><b>2</b><span>Drop in a Pinterest screenshot you love.</span></li>
+      <li><b>3</b><span>Deja finds that look in your own wardrobe.</span></li>
+    </ol>
+  </div>
+  <div class="cta-stack" style="margin-top:28px">
+    <button class="btn btn-primary" data-act="start">Add my outfits</button>
+    <button class="link" data-act="demo">Try a demo</button>
+  </div>
+</section>`;
+
+/* ---------- 2. Upload (Figma frame 3) ---------- */
+function progress(step) { return `<div class="progress" role="progressbar" aria-label="Step ${step} of 3" aria-valuemin="0" aria-valuemax="3" aria-valuenow="${step}"><i style="width:${step / 3 * 100}%"></i></div>`; }
+V.upload = (mode) => {
+  const adding = mode === "add";
+  return `
+<section class="screen onb" aria-labelledby="h">
+  <div class="glow low"></div>
+  ${adding ? `<div class="back-row"><a class="icon-btn" href="#/wardrobe" aria-label="Back to wardrobe">${I.back}</a></div>` : progress(1)}
+  <h1 id="h" tabindex="-1" class="h-display" style="margin-top:${adding ? 12 : 56}px">${adding ? `Add more <em class="s">outfits</em>` : `Upload your mirror<br>selfies + outfit pictures`}</h1>
+  <button class="drop" data-act="pick" id="dropzone" aria-describedby="drop-hint">${I.upload}
+    <span class="small" id="drop-hint">Pick several at once — one whole outfit per photo. JPG, PNG or WebP.</span></button>
+  <div class="cta-stack">
+    <button class="btn btn-primary" data-act="pick">Upload</button>
+    ${adding ? "" : `<div class="row" style="justify-content:center;gap:4px"><button class="link quiet" data-act="skip">Skip for now</button><span aria-hidden="true" class="small">·</span><button class="link quiet" data-act="demo">Use sample outfits</button></div>`}
+  </div>
+</section>`;
+};
+
+/* ---------- 3. Review (Figma frame 4) ---------- */
+V.review = (mode) => {
+  const adding = mode === "add";
+  const ups = State.uploads;
+  const ready = ups.filter(u => u.status === "ready").length, busy = ups.some(u => u.status === "processing");
+  const tile = u => {
+    let state = "";
+    if (u.status === "processing") state = `<div class="state"><div><div class="spinner"></div>Preparing…</div></div>`;
+    if (u.status === "error") state = `<div class="state err"><div>${esc(u.error)}${u.retryable ? `<br><button class="link" style="min-height:32px;padding:4px" data-act="retry-up" data-k="${u.key}">Retry</button>` : ""}</div></div>`;
+    return `<div class="tile"><div class="photo">${u.preview ? `<img src="${u.preview}" alt="Outfit photo ${esc(u.name)}">` : ""}</div>${state}
+      <button class="x" data-act="rm-up" data-k="${u.key}" aria-label="Remove ${esc(u.name)}">${I.x}</button></div>`;
+  };
+  const hint = !ups.length ? "Add at least one photo to continue."
+    : ready < 5 ? `${ready} ready · 5–10 outfits give Deja more to work with` : `${ready} outfits ready`;
+  return `
+<section class="screen onb" aria-labelledby="h">
+  <div class="glow low"></div>
+  ${adding ? `<div class="back-row"><a class="icon-btn" href="#/add" aria-label="Back">${I.back}</a></div>` : progress(2)}
+  <h1 id="h" tabindex="-1" class="h-display" style="margin-top:${adding ? 12 : 56}px">Are you happy?</h1>
+  <p class="small" style="text-align:center;margin:8px 0 0" role="status">${esc(hint)}</p>
+  <div class="review-grid">${ups.map(tile).join("")}
+    <button class="add-tile" data-act="pick">${I.plus}<span>Add more</span></button></div>
+  ${ups.some(u => u.status === "error") ? `<p class="small" style="text-align:center;margin-top:16px">Photos that didn't upload won't be added.</p>` : ""}
+  <div style="flex:1;min-height:28px"></div>
+  <button class="btn btn-primary" data-act="confirm-upload" ${!ready || busy ? "disabled" : ""}>${busy ? "Preparing photos…" : adding ? `Add ${ready || ""} to wardrobe` : "Yes"}</button>
+</section>`;
+};
+
+/* ---------- 4. Done (Figma frame 5) ---------- */
+V.done = () => `
+<section class="screen" aria-labelledby="h">
+  <div class="glow mid"></div>
+  ${progress(3)}
+  <div class="done" data-act="to-wardrobe">
+    ${I.check}
+    <h1 id="h" tabindex="-1" style="margin:0;font-weight:400"><span class="l1">You are all</span><br><em class="s l2">set</em></h1>
+  </div>
+  <div class="cta-stack"><button class="link quiet" data-act="to-wardrobe">Open my wardrobe</button></div>
+</section>`;
+
+/* ---------- 5. Wardrobe ---------- */
+function statusBadge(o) {
+  if (o.space === "demo") return "";
+  if (isText()) return needsNote(o) ? `<span class="badge">Add a description</span>` : `<span class="badge">Described</span>`;
+  if (o.analysisStatus === "pending") return `<span class="badge"><span class="spinner"></span>Reading</span>`;
+  if (o.analysisStatus === "failed") return `<span class="badge err">Not read</span>`;
+  if (o.analysisStatus === "not_outfit") return `<span class="badge err">No outfit found</span>`;
+  if (o.analysisStatus === "none") return `<span class="badge">Not analysed</span>`;
+  return "";
+}
+V.wardrobe = () => {
+  const list = outfits();
+  const addBtn = `<button class="icon-btn" data-act="add" aria-label="Add outfits">${I.plus}</button>`;
+  if (!list.length) return `
+<section class="screen has-nav" aria-labelledby="h">
+  <div class="glow mid soft"></div>
+  ${topbar(addBtn)}
+  ${demoNotice()}
+  <div class="empty">
+    <div class="ghosts" aria-hidden="true"><span></span><span></span><span></span></div>
+    <h1 id="h" tabindex="-1" style="margin:0;font-weight:400"><span class="l1">Nothing here</span><br><em class="s l2">yet</em></h1>
+    <p class="lede">${isDemo() ? "You've removed every sample outfit. Reset the demo to bring them back." : "Add photos of outfits you already own — mirror selfies work well. Deja keeps them on this device."}</p>
+    <div class="cta-stack" style="max-width:300px;margin-top:10px">
+      ${isDemo() ? `<button class="btn btn-primary" data-act="reset-demo">Reset demo</button>` : `<button class="btn btn-primary" data-act="add">Add my outfits</button><button class="link" data-act="demo">Try a demo</button>`}
+    </div>
+  </div>
+  ${nav("wardrobe")}
+</section>`;
+  const undescribed = !isDemo() && isText() ? list.filter(needsNote).length : 0;
+  const unread = !isDemo() && !isText() ? list.filter(o => ["none","failed"].includes(o.analysisStatus)).length : 0;
+  let aiNote = "";
+  if (undescribed) aiNote = `<div class="notice">${I.info}<div>${esc(NOTES_WHY)} ${undescribed} outfit${undescribed > 1 ? "s need a line" : " needs a line"} of description — open ${undescribed > 1 ? "each one" : "it"} and say what's in the photo.</div></div>`;
+  else if (!isDemo() && isText()) aiNote = `<div class="notice">${I.info}<div>${esc(NOTES_WHY)} Your outfits are described, so matching is ready.</div></div>`;
+  if (!isDemo() && unread) {
+    if (AI.status === "ready" && !Queue.busy) aiNote = `<div class="notice">${I.info}<div>${unread} outfit${unread > 1 ? "s haven't" : " hasn't"} been read yet. Deja reads each photo once so it can match looks.<div class="actions"><button class="link" data-act="analyse-all">Read ${unread > 1 ? "them" : "it"} now</button></div></div></div>`;
+  }
+  return `
+<section class="screen has-nav" aria-labelledby="h">
+  <div class="glow top soft"></div>
+  ${topbar(addBtn)}
+  <div class="stack" style="gap:12px">${demoNotice()}${aiNote}</div>
+  <div class="page-head"><h1 id="h" tabindex="-1" class="h-page">${isDemo() ? "Sample" : "Your"} <em class="s">wardrobe</em></h1><span class="count">${list.length} outfit${list.length === 1 ? "" : "s"}</span></div>
+  <div class="grid">${list.map(o => `
+    <button class="o-card" data-act="open-outfit" data-id="${esc(o.id)}" aria-label="${esc(o.name)} — view outfit">
+      <div class="polaroid"><div class="photo"><img src="${outfitImg(o)}" alt="" loading="lazy">${statusBadge(o)}</div></div>
+      <span class="name">${esc(o.name)}</span>
+      ${o.tags?.length ? `<span class="meta">${o.tags.slice(0, 2).map(t => `<span class="chip">${esc(t)}</span>`).join("")}</span>` : ""}
+    </button>`).join("")}
+  </div>
+  <div class="dock"><button class="btn btn-primary" data-act="to-style">${I.spark}Find my next look</button></div>
+  ${nav("wardrobe")}
+</section>`;
+};
+
+/* ---------- 6. Outfit detail ---------- */
+V.outfit = (id) => {
+  const o = findOutfit(id);
+  if (!o) return V.missing("This outfit isn't in your wardrobe any more.", "wardrobe");
+  const a = o.analysis;
+  let seen = "";
+  if (a && o.analysisStatus === "done") {
+    seen = `<p class="prose">${esc(a.description)}</p>
+      <dl class="kv">${a.palette?.length ? `<dt>Colours</dt><dd>${esc(a.palette.join(", "))}</dd>` : ""}
+      ${a.silhouette ? `<dt>Silhouette</dt><dd>${esc(a.silhouette)}</dd>` : ""}${a.layering ? `<dt>Layering</dt><dd>${esc(a.layering)}</dd>` : ""}
+      ${a.formality ? `<dt>Formality</dt><dd>${esc(a.formality)}</dd>` : ""}${a.occasions?.length ? `<dt>Good for</dt><dd>${esc(a.occasions.join(", "))}</dd>` : ""}</dl>
+      ${o.space === "demo" ? `<p class="small">Sample description written for the demo.</p>` : `<p class="small">Read by Claude from your photo.</p>`}`;
+  } else {
+    const msg = o.analysisStatus === "pending" ? "Deja is reading this photo…"
+      : o.analysisStatus === "not_outfit" ? "Deja couldn't find an outfit in this photo, so it won't be used for matching. Try a photo where the clothes are clearly visible."
+      : o.analysisStatus === "failed" ? (o.analysisError || "Deja couldn't read this photo.")
+      : AI.status === "unavailable" ? aiUnavailableCopy() : "Not analysed yet.";
+    seen = `<p class="prose" role="status">${esc(msg)}</p>${AI.status === "ready" && ["none","failed","not_outfit"].includes(o.analysisStatus) ? `<button class="btn btn-light btn-sm" data-act="analyse-one" data-id="${esc(o.id)}">${I.refresh}${o.analysisStatus === "none" ? "Read this photo" : "Try again"}</button>` : ""}`;
+  }
+  return `
+<section class="screen has-nav" aria-labelledby="h">
+  <div class="back-row"><button class="icon-btn" data-act="back" aria-label="Back">${I.back}</button><span class="small">${isDemo() ? "Sample outfit" : "Your outfit"}</span><span style="width:44px"></span></div>
+  <div class="stack">
+    <h1 id="h" tabindex="-1" class="sr">${esc(o.name)}</h1>
+    <div class="detail-photo"><img src="${outfitImg(o)}" alt="Outfit photo: ${esc(o.name)}"></div>
+    <div class="field"><label for="o-name" class="sr">Outfit name</label>
+      <input id="o-name" class="input name-input" value="${esc(o.name)}" maxlength="40" data-id="${esc(o.id)}" autocomplete="off" aria-describedby="o-name-hint">
+      <span id="o-name-hint" class="small">Tap the name to rename it.</span></div>
+    <div class="field"><label id="tags-l">Style tags</label>
+      <div class="tags" aria-labelledby="tags-l">${(o.tags || []).map((t, i) => `<span class="tag">${esc(t)}<button data-act="rm-tag" data-i="${i}" data-id="${esc(o.id)}" aria-label="Remove tag ${esc(t)}">${I.x}</button></span>`).join("") || `<span class="small">No tags yet.</span>`}</div>
+      <form class="tag-add" data-form="add-tag" data-id="${esc(o.id)}"><label for="tag-in" class="sr">New tag</label>
+        <input id="tag-in" class="input" placeholder="Add a tag, e.g. office" maxlength="22" autocomplete="off"><button class="btn btn-light btn-sm" type="submit">Add</button></form></div>
+    ${o.space === "demo" ? "" : `<div class="field"><label for="o-note">Your description</label>
+      <textarea id="o-note" class="input" rows="3" maxlength="300" data-id="${esc(o.id)}" aria-describedby="o-note-hint"
+        placeholder="e.g. Black blazer, white tee, wide black trousers, white trainers">${esc(o.note || "")}</textarea>
+      <span class="small" id="o-note-hint">${isText() ? esc(NOTES_WHY) + " This is what Deja matches on." : "Optional — a line about what's in the photo."}</span></div>`}
+    ${isText() && !(a && o.analysisStatus === "done") ? "" : `<div class="field"><label>What Deja sees</label>${seen}</div>`}
+    <button class="btn btn-primary" data-act="to-style">${I.spark}Find my next look</button>
+    <button class="btn btn-danger" data-act="del-outfit" data-id="${esc(o.id)}">${I.trash}Delete outfit</button>
+  </div>
+  ${nav("wardrobe")}
+</section>`;
+};
+
+/* ---------- 7. Style me (add inspiration) ---------- */
+V.style = () => {
+  const d = State.draft[State.space] || {};
+  const ref = d.ref, occ = d.occasion || "";
+  const list = outfits(), usable = list.filter(o => o.analysisStatus !== "not_outfit");
+  const isPreset = isDemo() && ref?.kind === "sample";
+  const textMode = isText() && !isPreset;
+  const text = d.text || "";
+  const describable = list.filter(o => o.space === "demo" || o.note || (o.analysis && o.analysisStatus === "done"));
+  let block = "", canGo = isPreset || (textMode ? text.trim().length >= 3 : !!ref);
+  if (!list.length) { canGo = false; block = `<div class="notice warn">${I.info}<div>Your wardrobe is empty — add a few outfits first so Deja has something to match.<div class="actions"><button class="link" data-act="add">Add my outfits</button><button class="link" data-act="demo">Try the demo</button></div></div></div>`; }
+  else if (textMode && !describable.length) { canGo = false; block = `<div class="notice warn">${I.info}<div>${esc(NOTES_WHY)} Open each outfit and add a line about what's in it, then come back.<div class="actions"><a class="link" href="#/wardrobe">Go to my wardrobe</a></div></div></div>`; }
+  else if (!textMode && !isPreset && !usable.length) { canGo = false; block = `<div class="notice warn">${I.info}<div>None of your photos showed a readable outfit. Add clearer outfit photos to get matches.</div></div>`; }
+  const img = inspImg(ref);
+  return `
+<section class="screen has-nav" aria-labelledby="h">
+  <div class="glow top soft"></div>
+  ${topbar()}
+  <div class="page-head" style="margin-top:0"><h1 id="h" tabindex="-1" class="h-page">Add your <em class="s">inspiration</em></h1></div>
+  <div class="stack" style="gap:22px">
+    <p class="lede" style="margin-top:-10px">A Pinterest screenshot, a street-style photo, a saved post — any image with an outfit you love.</p>
+    ${ref && img ? `
+      <div class="insp-preview"><img src="${img}" alt="Inspiration: ${esc(inspName(ref))}">
+        <div class="ovl"><button class="pill-float" data-act="pick-insp">${I.image}Replace</button><button class="pill-float" data-act="clear-insp">${I.x}Remove</button></div></div>`
+      : `<button class="insp-drop" data-act="pick-insp" id="insp-drop">${I.upload}<span style="font-size:16px;font-weight:500">${textMode ? "Add the picture" : "Upload an inspiration"}</span><span class="small">${textMode ? "Optional — kept for your reference, and shown with your matches" : "JPG, PNG or WebP · screenshots welcome · sent to Google Gemini for analysis"}</span></button>`}
+    ${textMode ? `<div class="field"><label for="insp-text">Describe the look</label>
+      <textarea id="insp-text" class="input" rows="3" maxlength="300" placeholder="e.g. Navy and ecru stripes, straight blue jeans, flat black shoes" aria-describedby="insp-text-hint">${esc(text)}</textarea>
+      <span class="small" id="insp-text-hint">${esc(NOTES_WHY)} Describe the colours, shapes and mood you see.</span></div>` : ""}
+    <div class="stack" style="gap:10px">
+      <div class="section-label"><span class="eyebrow" id="samples-l">Or try a sample</span>${liveStatus()}</div>
+      <div class="samples" role="group" aria-labelledby="samples-l">${DEMO.inspirations.map(s => `
+        <button class="sample" data-act="pick-sample" data-id="${s.id}" aria-pressed="${ref?.kind === "sample" && ref.id === s.id}">
+          <div class="photo"><img src="${Art.render(s.id, s.spec)}" alt=""></div><span>${esc(s.name)}</span></button>`).join("")}</div>
+    </div>
+    <div class="stack" style="gap:10px">
+      <span class="eyebrow" id="occ-l">Occasion <span style="text-transform:none;letter-spacing:0;font-weight:400">· optional</span></span>
+      <div class="occasions" role="group" aria-labelledby="occ-l">${OCCASIONS.map(o => `<button class="occ" data-act="occ" data-v="${o}" aria-pressed="${occ === o}">${o}</button>`).join("")}</div>
+    </div>
+    ${block}
+    ${isPreset ? `<p class="small" style="margin:0">Sample inspirations on the sample wardrobe show predefined demo suggestions.</p>` : ""}
+  </div>
+  <div class="dock"><button class="btn btn-primary" data-act="find" data-block="${block ? 1 : 0}" ${canGo ? "" : "disabled"}>Find my looks</button></div>
+  ${nav("style")}
+</section>`;
+};
+
+/* ---------- 8. Thinking ---------- */
+let Job = null; // {ctl, step, total, analysing}
+V.thinking = () => {
+  if (!Job) return V.style();
+  const d = State.draft[State.space] || {};
+  const steps = [];
+  if (Job.analysing) steps.push([`Reading ${Job.analysing} new outfit${Job.analysing > 1 ? "s" : ""}`, Job.step > 0 ? "done" : "on"]);
+  steps.push([`Comparing ${Job.notes ? "your description" : "your inspiration"} with ${Job.total} outfit${Job.total > 1 ? "s" : ""}`, Job.step > 1 ? "done" : Job.step === 1 ? "on" : ""]);
+  steps.push(["Choosing the closest looks", ""]);
+  return `
+<section class="screen" aria-labelledby="h" aria-busy="true">
+  <div class="glow mid breathe"></div>
+  <div class="thinking">
+    ${d.ref ? `<div class="thumb"><img src="${inspImg(d.ref)}" alt=""></div>` : ""}
+    <h1 id="h" tabindex="-1" style="margin:10px 0 0;font-weight:400"><span style="font-size:22px">Finding your</span><br><em class="s l2">looks</em></h1>
+    <ol class="steps" role="status">${steps.map(([t, c]) => `<li class="${c}">${esc(t)}</li>`).join("")}</ol>
+    <p class="small" style="max-width:260px">Live analysis usually takes 10–40 seconds.</p>
+  </div>
+  <div class="cta-stack"><button class="btn btn-light" data-act="stop" style="width:100%">Stop</button></div>
+</section>`;
+};
+
+/* ---------- 9. Matches ---------- */
+V.matches = () => {
+  const r = State.result[State.space];
+  if (!r) return V.style();
+  const img = inspImg(r.insp);
+  const valid = r.matches.map((m, i) => ({ ...m, i, o: findOutfit(m.id) })).filter(m => m.o);
+  const allWeak = valid.length && valid.every(m => m.score < 55);
+  const total = r.wardrobeSize ?? outfits().length;
+  const head = sourceTag(r);
+  const cards = valid.map(m => {
+    const [cls, label] = strengthOf(m.score);
+    const saved = isSaved({ ...m, insp: r.insp, text: r.text });
+    return `<article class="m-card" aria-labelledby="m${m.i}">
+      <div class="m-top">
+        <button class="o-card" data-act="view-match" data-i="${m.i}" aria-label="View ${esc(m.o.name)}"><div class="photo"><img src="${outfitImg(m.o)}" alt=""></div></button>
+        <div><span class="strength ${cls}">${label}</span><h2 class="m-title" id="m${m.i}">${esc(m.o.name)}</h2><p class="m-why">${esc(m.why)}</p></div>
+      </div>
+      ${m.tip ? `<div class="tip"><b>Tip</b><span>${esc(m.tip)}</span></div>` : ""}
+      <div class="m-actions">
+        <button class="btn btn-light btn-sm save-btn" data-act="toggle-save" data-i="${m.i}" aria-pressed="${!!saved}">${I.heart}${saved ? "Saved" : "Save look"}</button>
+        <button class="btn btn-primary btn-sm" data-act="view-match" data-i="${m.i}">View outfit</button>
+      </div></article>`;
+  }).join("");
+  let notes = "";
+  if (!r.isOutfit) notes += `<div class="notice warn">${I.info}<div>Deja couldn't see an outfit in this inspiration image. Try a screenshot where the clothes are clearly visible.</div></div>`;
+  else if (!valid.length) notes += `<div class="notice warn">${I.info}<div>No outfit in your wardrobe is close enough to recommend for this one${r.note ? ` — ${esc(r.note)}` : "."} Try another inspiration, or add more outfits.</div></div>`;
+  else if (allWeak) notes += `<p class="weak"><b>Honest take:</b> nothing in your wardrobe is a close match for this look. ${valid.length > 1 ? "These are the nearest options" : "This is the nearest option"}${r.note ? ` — ${esc(r.note)}` : "."}</p>`;
+  if (valid.length && valid.length < 3 && total < 3) notes += `<p class="weak">You have ${total} outfit${total > 1 ? "s" : ""} in your wardrobe, so Deja can show at most ${total}. Add more for more options.</p>`;
+  return `
+<section class="screen has-nav" aria-labelledby="h">
+  <div class="glow top soft"></div>
+  <div class="back-row"><a class="icon-btn" href="#/style" aria-label="Back to inspiration">${I.back}</a>${head}<span style="width:44px"></span></div>
+  <div class="insp-head" style="${img ? "" : "grid-template-columns:1fr"}">
+    ${img ? `<div class="photo"><img src="${img}" alt="Your inspiration"></div>` : ""}
+    <div><h1 id="h" tabindex="-1" class="h-page">Your <em class="s">matches</em></h1>
+      <p class="small" style="margin:6px 0 0">${esc(r.summary || inspName(r.insp))}</p>
+      ${r.occasion ? `<p style="margin:8px 0 0"><span class="chip quiet">${esc(r.occasion)}</span></p>` : ""}</div>
+  </div>
+  ${modeOf(r) === "notes" ? `<p class="small" style="margin:12px 0 0">Matched from your written description and your outfit notes — Deja did not read the pictures.</p>` : ""}
+  ${modeOf(r) === "local" ? `<p class="small" style="margin:12px 0 0">Matched on your words: Deja compared your description with your outfit notes and tags, on this device. No photos were analysed.</p>` : ""}
+  <div class="stack" style="margin-top:18px">${notes}${cards}
+    <button class="btn btn-light" data-act="another" style="width:100%">Try another inspiration</button>
+  </div>
+  ${nav("style")}
+</section>`;
+};
+
+/* ---------- 10. Look detail (from a match or a saved look) ---------- */
+function lookFrom(kind, key) {
+  if (kind === "m") { const r = State.result[State.space]; const m = r?.matches[+key];
+    return m ? { ...m, insp: r.insp, demo: r.demo, mode: modeOf(r), text: r.text, summary: r.summary, occasion: r.occasion, space: State.space, fromMatch: +key } : null; }
+  const s = State.saved.find(x => x.id === key) || Unsaved.get(key);
+  return s ? { ...s, id: s.outfitId, savedId: s.id } : null;
+}
+V.look = (kind, key) => {
+  const L = lookFrom(kind, key);
+  if (!L) return V.missing("This look isn't available any more.", kind === "s" ? "saved" : "style");
+  const o = findOutfit(L.id, L.space);
+  const [cls, label] = strengthOf(L.score);
+  const saved = isSaved(L);
+  return `
+<section class="screen has-nav" aria-labelledby="h">
+  <div class="back-row"><button class="icon-btn" data-act="back" aria-label="Back">${I.back}</button>
+    ${sourceTag(L, true)}<span style="width:44px"></span></div>
+  <div class="stack">
+    ${o ? `<div class="detail-photo"><img src="${outfitImg(o)}" alt="Outfit photo: ${esc(o.name)}"></div>`
+        : `<div class="notice warn">${I.info}<div>The outfit for this look was deleted from your wardrobe.</div></div>`}
+    <div><span class="strength ${cls}">${label}</span>
+      <h1 id="h" tabindex="-1" class="h-page" style="margin-top:10px">${esc(o?.name || L.name || "Saved look")}</h1></div>
+    <div class="row" style="gap:12px">
+      ${inspImg(L.insp) ? `<div class="photo" style="width:64px;flex:0 0 64px;border-radius:8px;box-shadow:var(--shadow-card)"><img src="${inspImg(L.insp)}" alt=""></div>` : ""}
+      <div><span class="eyebrow">Inspired by</span><div style="font-size:15px">${esc(L.summary || inspName(L.insp))}</div>${L.occasion ? `<span class="chip quiet" style="margin-top:6px">${esc(L.occasion)}</span>` : ""}</div>
+    </div>
+    <div class="field"><label>Why it works</label><p class="prose">${esc(L.why)}</p></div>
+    ${L.tip ? `<div class="tip"><b>Tip</b><span>${esc(L.tip)}</span></div>` : ""}
+    <div class="split">
+      <button class="btn btn-light save-btn" data-act="toggle-save-look" data-kind="${kind}" data-key="${esc(key)}" aria-pressed="${!!saved}">${I.heart}${saved ? "Saved" : "Save look"}</button>
+      ${o ? `<button class="btn btn-primary" data-act="open-outfit" data-id="${esc(o.id)}" data-space="${L.space}">Edit outfit</button>` : `<button class="btn btn-primary" data-act="to-style">New look</button>`}
+    </div>
+  </div>
+  ${nav(kind === "s" ? "saved" : "style")}
+</section>`;
+};
+
+/* ---------- 11. Saved ---------- */
+V.saved = () => {
+  const list = State.saved.filter(s => s.space === State.space);
+  if (!list.length) return `
+<section class="screen has-nav" aria-labelledby="h">
+  <div class="glow mid soft"></div>
+  ${topbar()}
+  <div class="empty">
+    <div class="ghosts" aria-hidden="true"><span></span><span></span><span></span></div>
+    <h1 id="h" tabindex="-1" style="margin:0;font-weight:400"><span class="l1">No saved looks</span><br><em class="s l2">yet</em></h1>
+    <p class="lede">When a match feels right, tap “Save look” and it lands here.</p>
+    <div class="cta-stack" style="max-width:300px;margin-top:10px"><button class="btn btn-primary" data-act="to-style">${I.spark}Find my next look</button></div>
+  </div>
+  ${nav("saved")}
+</section>`;
+  return `
+<section class="screen has-nav" aria-labelledby="h">
+  <div class="glow top soft"></div>
+  ${topbar()}
+  <div class="page-head"><h1 id="h" tabindex="-1" class="h-page">Saved <em class="s">looks</em></h1><span class="count">${list.length}</span></div>
+  <div class="s-list">${list.map(s => { const o = findOutfit(s.outfitId, s.space); return `
+    <button class="s-item" data-act="open-saved" data-id="${esc(s.id)}">
+      <div class="pair"><div class="a">${o ? `<img src="${outfitImg(o)}" alt="">` : ""}</div>${inspImg(s.insp) ? `<div class="b"><img src="${inspImg(s.insp)}" alt=""></div>` : ""}</div>
+      <div><div class="t">${esc(o?.name || "Deleted outfit")}</div><div class="d">${esc(s.why)}</div>
+        <div class="row wrap" style="gap:6px;margin-top:8px"><span class="chip">${({ demo: "Demo", notes: "From notes", local: "Your words" })[modeOf(s)] || "Live"}</span>${s.occasion ? `<span class="chip quiet">${esc(s.occasion)}</span>` : ""}</div></div>
+    </button>`; }).join("")}</div>
+  ${nav("saved")}
+</section>`;
+};
+
+V.missing = (msg, back) => `
+<section class="screen has-nav"><div class="glow mid soft"></div>${topbar()}
+  <div class="empty"><h1 id="h" tabindex="-1" style="margin:0;font-weight:400"><span class="l1">Nothing to</span><br><em class="s l2">see</em></h1><p class="lede">${esc(msg)}</p>
+  <div class="cta-stack" style="max-width:300px"><a class="btn btn-primary" href="#/${back}">Go back</a></div></div>${nav(back)}</section>`;
+/* =====================================================================
+   Controller: routing, actions, uploads, matching, saving
+   ===================================================================== */
+const Unsaved = new Map();       // looks un-saved from their own detail view stay visible
+let curPath = null, prevPath = null, doneTimer = null, refreshT = null;
+
+function render() {
+  const [r, a, b] = route();
+  const path = route().join("/");
+  if (path !== curPath) clearTimeout(doneTimer);
+  let html;
+  switch (r) {
+    case "": case "welcome":
+      if (r === "" && State.onboarded) return location.replace("#/wardrobe");
+      html = V.welcome(); break;
+    case "upload": html = V.upload("onboard"); break;
+    case "add":
+      if (isDemo()) return location.replace("#/wardrobe");
+      html = V.upload("add"); break;
+    case "review":
+      if (!State.uploads.length) return location.replace(a === "add" ? "#/add" : "#/upload");
+      html = V.review(a); break;
+    case "done": html = V.done(); if (path !== curPath) doneTimer = setTimeout(() => route()[0] === "done" && go("wardrobe"), 2600); break;
+    case "wardrobe": html = V.wardrobe(); break;
+    case "outfit": html = V.outfit(a); break;
+    case "style": html = V.style(); break;
+    case "thinking": if (!Job) return location.replace("#/style"); html = V.thinking(); break;
+    case "matches": if (!State.result[State.space]) return location.replace("#/style"); html = V.matches(); break;
+    case "look": html = V.look(a, b); break;
+    case "saved": html = V.saved(); break;
+    default: return location.replace("#/wardrobe");
+  }
+  const same = path === curPath, y = window.scrollY;
+  if (!same) { prevPath = curPath; curPath = path; }
+  $("#app").innerHTML = html;
+  if (same) window.scrollTo(0, y);
+  else { window.scrollTo(0, 0); $("#h")?.focus({ preventScroll: true }); }
+  bindDrops();
+}
+function refresh() {
+  clearTimeout(refreshT);
+  refreshT = setTimeout(() => {
+    const ae = document.activeElement;
+    if (ae && ae.tagName === "INPUT" && $("#app").contains(ae)) return;   // never clobber typing
+    if ($("#dlg").open) return;
+    render();
+  }, 60);
+}
+
+/* ---------- Uploads ---------- */
+function pickFiles(multi) { const el = $(multi ? "#file-multi" : "#file-one"); el.value = ""; el.click(); }
+async function handleFiles(list) {
+  const files = [...list]; if (!files.length) return;
+  if (isDemo()) { setSpace("mine"); }
+  if (!State.batch) { State.batch = uid("b"); DB.kvSet("batch", State.batch).catch(() => {}); }
+  const fresh = files.map(f => ({ key: uid("u"), file: f, name: f.name || "photo", status: "processing" }));
+  State.uploads.push(...fresh);
+  const r = route()[0];
+  if (r === "upload") go("review"); else if (r === "add") go("review/add"); else render();
+  for (const u of fresh) await processUpload(u);
+}
+async function processUpload(u) {
+  u.status = "processing"; u.error = ""; refresh();
+  try {
+    const { blob, w, h } = await compress(u.file);
+    const o = { id: uid("o"), space: "mine", name: `Outfit ${State.mine.length + 1}`, nameEdited: false, tags: [], tagsEdited: false,
+      blob, w, h, createdAt: Date.now(), analysis: null, analysisStatus: "none", analysisError: "", batch: State.batch };
+    await saveOutfit(o);
+    if (!State.uploads.includes(u)) { await DB.del("outfits", o.id); return; }   // removed while preparing
+    State.mine.unshift(o);
+    Object.assign(u, { status: "ready", outfitId: o.id, preview: blobUrl(o.id, blob) });
+  } catch (e) {
+    u.status = "error";
+    u.retryable = !(e instanceof UploadError && (e.code === "type" || e.code === "size"));
+    u.error = e instanceof UploadError ? e.message : e?.name === "QuotaExceededError" ? "Storage is full on this device" : "Couldn't save this photo";
+  }
+  refresh();
+}
+async function removeUpload(key) {
+  const u = State.uploads.find(x => x.key === key); if (!u) return;
+  State.uploads = State.uploads.filter(x => x !== u);
+  if (u.outfitId) await deleteOutfitData(u.outfitId);
+  if (!State.uploads.length) { const add = route()[1] === "add"; go(add ? "add" : "upload"); } else render();
+}
+function rebuildBatch() {
+  if (!State.batch) return;
+  State.uploads = State.mine.filter(o => o.batch === State.batch).map(o => ({ key: uid("u"), name: o.name, status: "ready", outfitId: o.id, preview: blobUrl(o.id, o.blob) }));
+}
+async function finishUpload() {
+  const add = route()[1] === "add";
+  const ids = State.uploads.filter(u => u.status === "ready").map(u => u.outfitId);
+  const list = State.mine.filter(o => ids.includes(o.id));
+  list.forEach(o => { delete o.batch; saveOutfit(o).catch(() => {}); });
+  State.uploads = []; State.batch = null; DB.kvDel("batch").catch(() => {});
+  setSpace("mine"); setOnboarded();
+  Queue.add(list);
+  if (add) { toast(`Added ${list.length} outfit${list.length > 1 ? "s" : ""}`); location.replace("#/wardrobe"); }
+  else location.replace("#/done");
+}
+
+/* ---------- Wardrobe edits ---------- */
+function applyAnalysis(o, a) {
+  if (!a.isOutfit) { o.analysisStatus = "not_outfit"; o.analysis = null; return; }
+  o.analysis = a; o.analysisStatus = "done"; o.analysisError = "";
+  if (!o.nameEdited && a.name) o.name = a.name;
+  if (!o.tagsEdited && a.tags.length) o.tags = a.tags;
+}
+async function renameOutfit(id, name) {
+  name = name.trim().replace(/\s+/g, " ").slice(0, 40);
+  const o = findOutfit(id); if (!o) return;
+  if (!name) { render(); return toast("A name can't be empty"); }
+  if (name === o.name) return;
+  if (isDemo()) { State.demo.names[id] = name; await saveDemo(); }
+  else { const m = State.mine.find(x => x.id === id); m.name = name; m.nameEdited = true; await saveOutfit(m); }
+  toast("Renamed");
+}
+async function setTags(id, tags) {
+  if (isDemo()) { State.demo.tags[id] = tags; await saveDemo(); }
+  else { const m = State.mine.find(x => x.id === id); m.tags = tags; m.tagsEdited = true; await saveOutfit(m); }
+  render();
+}
+async function deleteOutfitData(id) {
+  State.mine = State.mine.filter(o => o.id !== id);
+  dropUrl(id);
+  await DB.del("outfits", id).catch(() => {});
+}
+async function deleteOutfit(id) {
+  const o = findOutfit(id); if (!o) return;
+  const looks = State.saved.filter(s => s.space === State.space && s.outfitId === id);
+  const ok = await ask({ title: `Delete “${o.name}”?`, body: `${isDemo() ? "It will be hidden from the sample wardrobe until you reset the demo." : "The photo is removed from this device."}${looks.length ? ` ${looks.length} saved look${looks.length > 1 ? "s" : ""} using it will be removed too.` : ""}`, ok: "Delete", danger: true });
+  if (!ok) return;
+  if (isDemo()) { State.demo.deleted.push(id); await saveDemo(); } else await deleteOutfitData(id);
+  for (const s of looks) await unsaveRecord(s);
+  toast("Outfit deleted");
+  location.replace("#/wardrobe");
+}
+
+/* ---------- Demo ---------- */
+function enterDemo() { setSpace("demo"); setOnboarded(); State.uploads = []; toast("Sample wardrobe loaded"); go("wardrobe"); }
+async function resetDemo() {
+  const ok = await ask({ title: "Reset the demo?", body: "Sample outfits, names, tags, saved demo looks and demo results go back to the start. Your own wardrobe isn't touched.", ok: "Reset demo" });
+  if (!ok) return;
+  State.demo = { deleted: [], names: {}, tags: {} }; await saveDemo();
+  for (const s of State.saved.filter(s => s.space === "demo")) await unsaveRecord(s);
+  const old = [State.draft.demo?.ref?.id, State.result.demo?.insp?.id];
+  State.draft.demo = null; State.result.demo = null;
+  await DB.kvDel("draft:demo").catch(() => {}); await DB.kvDel("result:demo").catch(() => {});
+  for (const id of old) await gcInspiration(id);
+  setSpace("demo");
+  toast("Demo reset"); go("wardrobe");
+}
+
+/* ---------- Inspiration ---------- */
+async function handleInsp(file) {
+  if (!file) return;
+  try {
+    toast("Preparing image…", false);
+    const { blob } = await compress(file, 1600);
+    const rec = { id: uid("i"), blob, createdAt: Date.now() };
+    await DB.put("inspirations", rec); State.insp.set(rec.id, rec);
+    const d = State.draft[State.space] || {}, old = d.ref;
+    await setDraft({ ...d, ref: { kind: "upload", id: rec.id } });
+    if (old?.kind === "upload") await gcInspiration(old.id);
+    toast("Inspiration added"); render();
+  } catch (e) { toast(e instanceof UploadError ? e.message : "Couldn't use that image — try a JPG or PNG"); }
+}
+
+/* ---------- Matching ---------- */
+async function saveNote(id, text) {
+  const o = State.mine.find(x => x.id === id); if (!o) return;
+  const v = text.trim().slice(0, 300);
+  if (v === (o.note || "")) return;
+  o.note = v; await saveOutfit(o).catch(() => {});
+  toast(v ? "Description saved" : "Description cleared"); refresh();
+}
+async function runFindNotes(d, occasion) {
+  const text = (d.text || "").trim();
+  if (text.length < 3) return toast("Describe the look you want first");
+  const list = outfits().filter(o => o.space === "demo" || o.note || (o.analysis && o.analysisStatus === "done"));
+  if (!list.length) return toast("Add a description to at least one outfit first");
+  const ctl = new AbortController();
+  Job = { ctl, step: 1, total: list.length, analysing: 0, notes: true };
+  go("thinking");
+  try {
+    const res = await AI.matchText(text, list, occasion, ctl.signal);
+    if (ctl.signal.aborted) throw { code: "cancelled" };
+    await setResult({ insp: d.ref || null, text, occasion, mode: "notes", demo: false, isOutfit: true,
+      summary: res.summary || text, note: res.note, matches: res.matches, wardrobeSize: list.length, at: Date.now() });
+    Job = null; location.replace("#/matches");
+  } catch (e) {
+    Job = null; location.replace("#/style");
+    toast(e?.code === "cancelled" ? "Stopped" : (e?.message || "Something went wrong — try again"));
+  }
+}
+async function runFindLocal(d, occasion) {
+  const text = (d.text || "").trim();
+  if (text.length < 3) return toast("Describe the look you want first");
+  const list = outfits().filter(o => o.space === "demo" || o.note || (o.tags || []).length || (o.analysis && o.analysisStatus === "done"));
+  if (!list.length) return toast("Add a description to at least one outfit first");
+  let res;
+  try { res = Local.match(text, list, occasion); } catch (e) { return toast(e.message); }
+  await setResult({ insp: d.ref || null, text, occasion, mode: "local", demo: false, isOutfit: true,
+    summary: res.summary, note: res.note, matches: res.matches, wardrobeSize: list.length, at: Date.now() });
+  go("matches");
+}
+async function runFind() {
+  const d = State.draft[State.space] || {};
+  const occasion = d.occasion || "";
+  if (!(isDemo() && d.ref?.kind === "sample")) {
+    if (AI.status === "text") return runFindNotes(d, occasion);
+    if (AI.status === "unavailable") return runFindLocal(d, occasion);
+  }
+  if (!d.ref) return;
+  if (isDemo() && d.ref.kind === "sample") {
+    const s = DEMO.inspirations.find(x => x.id === d.ref.id);
+    const pre = (DEMO.matches[d.ref.id] || []).filter(m => findOutfit(m.id)).map(m => ({ ...m }));
+    await setResult({ insp: d.ref, occasion, demo: true, mode: "demo", isOutfit: true, summary: s.summary, note: "", matches: pre, wardrobeSize: outfits().length, at: Date.now() });
+    return go("matches");
+  }
+  if (AI.status !== "ready") return toast(AI.status === "checking" ? "Still checking live matching — try again in a moment" : "Live matching isn't available here");
+  const ctl = new AbortController();
+  const toRead = isDemo() ? [] : State.mine.filter(o => ["none","failed"].includes(o.analysisStatus));
+  Job = { ctl, step: toRead.length ? 0 : 1, total: outfits().filter(o => o.analysisStatus !== "not_outfit").length, analysing: toRead.length };
+  go("thinking");
+  const upd = () => route()[0] === "thinking" && render();
+  try {
+    while (Queue.busy) { if (ctl.signal.aborted) throw { code: "cancelled" }; await sleep(300); }
+    for (const o of toRead) {
+      if (ctl.signal.aborted) throw { code: "cancelled" };
+      if (!["none","failed"].includes(o.analysisStatus)) continue;
+      o.analysisStatus = "pending";
+      try { applyAnalysis(o, await AI.analyzeOutfit(o.blob)); }
+      catch (e) { o.analysisStatus = e.code === "not_granted" ? "none" : "failed"; o.analysisError = e.message; if (AI.status !== "ready") throw e; }
+      await saveOutfit(o).catch(() => {});
+    }
+    if (ctl.signal.aborted) throw { code: "cancelled" };
+    const ready = outfits().filter(o => o.analysisStatus === "done");
+    if (!ready.length) throw new Error("None of your outfit photos could be read yet, so there's nothing to match. Open an outfit to try again.");
+    Job.step = 1; Job.total = ready.length; upd();
+    const blob = d.ref.kind === "sample" ? dataUrlToBlob(inspImg(d.ref)) : State.insp.get(d.ref.id)?.blob;
+    if (!blob) throw new Error("The inspiration image is missing — add it again.");
+    const res = await AI.match(blob, ready, occasion, ctl.signal);
+    if (ctl.signal.aborted) throw { code: "cancelled" };
+    Job.step = 2; upd();
+    const prev = State.result[State.space]?.insp?.id;
+    await setResult({ insp: d.ref, occasion, demo: false, mode: "live", isOutfit: res.isOutfit, summary: res.summary, note: res.note, matches: res.matches, wardrobeSize: ready.length, at: Date.now() });
+    if (prev && prev !== d.ref.id) gcInspiration(prev);
+    Job = null; location.replace("#/matches");
+  } catch (e) {
+    Job = null;
+    location.replace("#/style");
+    if (e?.code !== "cancelled") toast(e?.message || "Something went wrong — try again"); else toast("Stopped");
+  }
+}
+
+/* ---------- Saving looks ---------- */
+function isSaved(L) {
+  const sp = L.space || State.space;
+  return State.saved.find(s => s.space === sp && s.outfitId === L.id && s.insp?.kind === L.insp?.kind && s.insp?.id === L.insp?.id
+    && (s.insp ? true : (s.text || "") === (L.text || "")));
+}
+async function unsaveRecord(s) {
+  State.saved = State.saved.filter(x => x !== s);
+  await DB.del("saved", s.id).catch(() => {});
+  if (s.insp?.kind === "upload") await gcInspiration(s.insp.id);
+}
+async function toggleSave(L) {
+  const ex = isSaved(L);
+  if (ex) { Unsaved.set(ex.id, ex); await unsaveRecord(ex); toast("Removed from saved"); }
+  else {
+    const rec = { id: uid("s"), space: L.space || State.space, outfitId: L.id, insp: L.insp || null, score: L.score, why: L.why, tip: L.tip,
+      demo: !!L.demo, mode: L.mode || (L.demo ? "demo" : "live"), text: L.text || "", occasion: L.occasion || "", summary: L.summary || "", savedAt: Date.now() };
+    try { await DB.put("saved", rec); } catch { return toast("Couldn't save — storage is blocked"); }
+    State.saved.unshift(rec); toast("Saved to your looks");
+  }
+  render();
+}
+
+/* ---------- Events ---------- */
+document.addEventListener("click", async e => {
+  const el = e.target.closest("[data-act]"); if (!el || el.disabled) return;
+  const act = el.dataset.act, id = el.dataset.id;
+  switch (act) {
+    case "start": setSpace("mine"); State.uploads = []; State.batch = null; go("upload"); break;
+    case "demo": enterDemo(); break;
+    case "skip": setSpace("mine"); setOnboarded(); go("wardrobe"); break;
+    case "pick": pickFiles(true); break;
+    case "rm-up": removeUpload(el.dataset.k); break;
+    case "retry-up": { const u = State.uploads.find(x => x.key === el.dataset.k); if (u?.file) processUpload(u); break; }
+    case "confirm-upload": finishUpload(); break;
+    case "to-wardrobe": go("wardrobe"); break;
+    case "add":
+      if (isDemo()) {
+        const ok = await ask({ title: "Add your own outfits?", body: "The sample wardrobe stays as it is. Your photos go into your own wardrobe, kept separately on this device.", ok: "Switch to my wardrobe" });
+        if (!ok) return;
+        setSpace("mine");
+      }
+      State.uploads = []; State.batch = null; go("add"); break;
+    case "open-outfit": go("outfit/" + id); break;
+    case "back": {
+      const r = route(), fallback = r[0] === "outfit" ? "wardrobe" : r[1] === "s" ? "saved" : "matches";
+      const target = prevPath && prevPath !== curPath && !["thinking","review","done","upload"].includes(prevPath.split("/")[0]) ? prevPath : fallback;
+      go(target); break;
+    }
+    case "reset-demo": resetDemo(); break;
+    case "exit-demo": setSpace("mine"); toast("Switched to your wardrobe"); go("wardrobe"); break;
+    case "analyse-all": Queue.add(State.mine); render(); break;
+    case "analyse-one": { const o = State.mine.find(x => x.id === id); if (o) { Queue.add([o]); render(); } break; }
+    case "rm-tag": { const o = findOutfit(id); if (o) setTags(id, o.tags.filter((_, i) => i !== +el.dataset.i)); break; }
+    case "del-outfit": deleteOutfit(id); break;
+    case "to-style": go("style"); break;
+    case "pick-insp": pickFiles(false); break;
+    case "clear-insp": { const d = State.draft[State.space] || {}; const old = d.ref; await setDraft({ ...d, ref: null }); if (old?.kind === "upload") await gcInspiration(old.id); render(); break; }
+    case "pick-sample": {
+      const d = State.draft[State.space] || {}, old = d.ref;
+      const sample = DEMO.inspirations.find(x => x.id === id);
+      const next = { ...d, ref: { kind: "sample", id } };
+      if (["text","unavailable"].includes(AI.status) && !(d.text || "").trim() && sample) next.text = sample.summary;   // the sample's own written summary
+      await setDraft(next);
+      if (old?.kind === "upload") await gcInspiration(old.id);
+      render(); break;
+    }
+    case "occ": { const d = State.draft[State.space] || {}; await setDraft({ ...d, occasion: d.occasion === el.dataset.v ? "" : el.dataset.v }); render(); break; }
+    case "find": runFind(); break;
+    case "stop": Job?.ctl.abort(); break;
+    case "view-match": go("look/m/" + el.dataset.i); break;
+    case "toggle-save": { const r = State.result[State.space]; const m = r?.matches[+el.dataset.i]; if (m) toggleSave({ ...m, insp: r.insp, demo: r.demo, mode: modeOf(r), text: r.text, occasion: r.occasion, summary: r.summary }); break; }
+    case "toggle-save-look": { const L = lookFrom(el.dataset.kind, el.dataset.key); if (L) toggleSave(L); break; }
+    case "another": { const d = State.draft[State.space] || {}; await setDraft({ ...d, ref: null }); go("style"); break; }
+    case "open-saved": go("look/s/" + id); break;
+  }
+});
+document.addEventListener("submit", e => {
+  const f = e.target.closest("[data-form='add-tag']"); if (!f) return;
+  e.preventDefault();
+  const inp = f.querySelector("input"), v = inp.value.trim().replace(/\s+/g, " ").slice(0, 22), o = findOutfit(f.dataset.id);
+  if (!v || !o) return;
+  if (o.tags.some(t => t.toLowerCase() === v.toLowerCase())) { inp.value = ""; return toast("That tag is already there"); }
+  if (o.tags.length >= 8) return toast("Up to 8 tags per outfit");
+  inp.value = "";
+  setTags(o.id, [...o.tags, v]).then(() => $("#tag-in")?.focus());
+});
+document.addEventListener("input", e => {
+  if (e.target.id !== "insp-text") return;
+  const d = State.draft[State.space] || {}; d.text = e.target.value; State.draft[State.space] = d;
+  const btn = $("button[data-act='find']");
+  if (btn) btn.disabled = btn.dataset.block === "1" || e.target.value.trim().length < 3;
+});
+document.addEventListener("change", e => {
+  if (e.target.id === "o-name") renameOutfit(e.target.dataset.id, e.target.value);
+  if (e.target.id === "o-note") saveNote(e.target.dataset.id, e.target.value);
+  if (e.target.id === "insp-text") setDraft({ ...(State.draft[State.space] || {}), text: e.target.value });
+  if (e.target.id === "file-multi") handleFiles(e.target.files);
+  if (e.target.id === "file-one") handleInsp(e.target.files[0]);
+});
+document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.id === "o-name") { e.preventDefault(); e.target.blur(); } });
+function bindDrops() {
+  [["#dropzone", f => handleFiles(f)], ["#insp-drop", f => handleInsp(f[0])]].forEach(([sel, fn]) => {
+    const z = $(sel); if (!z) return;
+    z.addEventListener("dragover", e => { e.preventDefault(); z.classList.add("over"); });
+    z.addEventListener("dragleave", () => z.classList.remove("over"));
+    z.addEventListener("drop", e => { e.preventDefault(); z.classList.remove("over"); if (e.dataTransfer?.files?.length) fn(e.dataTransfer.files); });
+  });
+}
+
+/* ---------- Boot ---------- */
+(async () => {
+  await loadState();
+  State.mine.forEach(o => { o.queued = false; });
+  rebuildBatch();
+  AI.on(() => { refresh(); Queue.run(); });
+  AI.init();
+  window.addEventListener("hashchange", render);
+  render();
+  if (!State.persistent) setTimeout(() => toast("Storage is blocked here — photos last only until you close this page", true), 800);
+})();
+</script>
+
+</body>
+</html>
