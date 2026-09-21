@@ -28,7 +28,16 @@ module.exports = async function handler(req, res) {
     });
     if (!upstream.ok) {
       const status = upstream.status;
-      return res.status(status === 429 ? 429 : 502).json({error:status===429?'Gemini free-tier quota reached. Wait and retry, or use the sample demo.':status===400||status===403?'Gemini rejected the request. Check your API key and project access in AI Studio.':status===404?'This Gemini model is unavailable. Update GEMINI_MODEL in Vercel.':'Gemini is temporarily unavailable. Please retry.',code:status===429?'rate_limited':'upstream_error'});
+      let detail = {};
+      try { detail = await upstream.json(); } catch {}
+      const providerCode = String(detail.error?.status || 'UNKNOWN').replace(/[^A-Z_]/g, '').slice(0,60);
+      let message = String(detail.error?.message || 'No additional details returned.');
+      message = message.split(key).join('[redacted]').replace(/AIza[\w-]+/g, '[redacted]').slice(0,650);
+      console.error('Gemini request failed', {status, model, providerCode});
+      return res.status(status === 429 ? 429 : 502).json({
+        error: `Gemini ${status} (${providerCode}, ${model}): ${message}`,
+        code: status === 429 ? 'rate_limited' : 'upstream_error'
+      });
     }
     const data = await upstream.json();
     const text = (data.candidates?.[0]?.content?.parts || []).filter(p=>!p.thought).map(p=>p.text||'').join('');
